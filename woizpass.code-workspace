@@ -1,0 +1,27 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "launch": {
+        "version": "0.2.0",
+        "configurations": [],
+        "compounds": [
+            {
+                "name": "dev",
+                "configurations": [
+                    {
+                        "name": "api"
+                    },
+                    {
+                        "name": "client"
+                    },
+                    {
+                        "name": "chrome"
+                    }
+                ]
+            }
+        ]
+    }
+}
