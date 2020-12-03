@@ -1,19 +1,37 @@
 FROM node:14.4.0
-COPY package.json package-lock.json /src/
+
+RUN useradd -ms /bin/bash woizpass
+
+# build
+USER woizpass
+COPY --chown=woizpass:woizpass package.json package-lock.json decorate-angular-cli.js skip-postinstall.js /src/
 WORKDIR /src
 RUN npm ci --also=dev
-
-COPY . /src
+COPY --chown=woizpass:woizpass . /src
 RUN npm run nx -- build api --prod
 RUN npm run nx -- build client --prod
+
+# move dist to /apps
+USER root
 RUN mv dist/apps /
-RUN cp package.json /apps/package.json
-RUN cp package-lock.json /apps/package-lock.json
+RUN mv package.json /apps/
+RUN mv package-lock.json /apps/
+RUN mv skip-postinstall.js /apps/
+RUN chown -R woizpass /apps
+RUN chgrp -R woizpass /apps
+
+# create /apps/node_modules
+USER woizpass
 WORKDIR /apps
+ENV NODE_ENV=production
 RUN npm ci --production
+
+# cleanup
+USER root
 RUN rm -R /src
 
-ENV NODE_ENV=production
+# run
+USER woizpass
 WORKDIR /apps
 RUN ls
 CMD [ "node", "api/main.js" ]
