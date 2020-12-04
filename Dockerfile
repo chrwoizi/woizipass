@@ -29,6 +29,8 @@ RUN npm ci --production
 # cleanup
 USER root
 RUN rm -R /src
+RUN mkdir -p /apps/data
+RUN chown -R woizpass /apps/data
 
 # run
 USER woizpass
