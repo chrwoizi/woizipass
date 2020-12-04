@@ -23,5 +23,24 @@
       "url": "http://localhost:4200",
       "webRoot": "${workspaceFolder}"
     }
+  ],
+  "compounds": [
+    {
+      "name": "dev",
+      "configurations": [
+        {
+          "name": "api",
+          "folder": "woizpass"
+        },
+        {
+          "name": "client",
+          "folder": "woizpass"
+        },
+        {
+          "name": "chrome",
+          "folder": "woizpass"
+        }
+      ]
+    }
   ]
 }
