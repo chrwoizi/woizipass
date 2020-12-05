@@ -3,6 +3,10 @@
 curl -X POST http://localhost:3333/api/login -d '{"username": "woizpass", "password": "test"}' -H "Content-Type: application/json"
 
 #### 
+# @name unauthorized
+curl -X POST http://localhost:3333/api/logout -d '{}' -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNocmlzdGlhbkB3b2l6aXNjaGtlLmRlIiwic3ViIjoiNWZiNjRlMDNkOTQwZmIwMDEyMTUzZmMzIiwiaWF0IjoxNjA3MTY4MzgzLCJleHAiOjE2MDczNDExODN9.zR-4wTUXi_NfVfE18x3leEjRT86qNL4xHDP7fDpmbwk" -H "Content-Type: application/json"
+
+#### 
 # @name logout
 @authToken = {{login.response.body.idToken}}
 curl -X POST http://localhost:3333/api/logout -d '{}' -H "Authorization: Bearer {{authToken}}" -H "Content-Type: application/json"
