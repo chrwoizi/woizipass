@@ -1,3 +1,8 @@
 ###
 # @name login
-curl -X POST http://localhost:3333/api/auth -d '{"username": "woizpass", "password": "test"}' -H "Content-Type: application/json"
+curl -X POST http://localhost:3333/api/login -d '{"username": "woizpass", "password": "test"}' -H "Content-Type: application/json"
+
+#### 
+# @name logout
+@authToken = {{login.response.body.idToken}}
+curl -X POST http://localhost:3333/api/logout -d '{}' -H "Authorization: Bearer {{authToken}}" -H "Content-Type: application/json"

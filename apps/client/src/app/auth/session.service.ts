@@ -13,14 +13,13 @@ export class SessionService {
 
   constructor(private http: HttpClient) {}
 
-  @Output() loggedIn = new EventEmitter<void>();
-  @Output() loggedOut = new EventEmitter<void>();
-
   login(password: string) {
-    return this.http.post('/api/auth', { username: 'woizpass', password }).pipe(
-      tap((res) => this.setSession(res)),
-      shareReplay()
-    );
+    return this.http
+      .post('/api/login', { username: 'woizpass', password })
+      .pipe(
+        tap((res) => this.setSession(res)),
+        shareReplay()
+      );
   }
 
   parseJwt(token) {
@@ -43,16 +42,17 @@ export class SessionService {
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem('expires_at', tokenData.exp);
     this._changeSubject.next(this.isLoggedIn());
-
-    this.loggedIn.emit();
   }
 
   logout() {
-    localStorage.removeItem('id_token');
-    localStorage.removeItem('expires_at');
-    this._changeSubject.next(false);
-
-    this.loggedOut.emit();
+    return this.http.post('/api/logout', {}).pipe(
+      tap(() => {
+        localStorage.removeItem('id_token');
+        localStorage.removeItem('expires_at');
+        this._changeSubject.next(false);
+      }),
+      shareReplay()
+    );
   }
 
   public isLoggedIn() {

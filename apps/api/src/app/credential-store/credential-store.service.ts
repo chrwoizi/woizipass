@@ -25,9 +25,13 @@ export class CredentialStoreService {
   }
 
   private async setCachedKey(key: Buffer) {
-    await this.cacheManager.set('key', key.toString('base64'), {
-      ttl: 60 * 60 * 1000,
-    });
+    if (key) {
+      await this.cacheManager.set('key', key.toString('base64'), {
+        ttl: 60 * 60 * 1000,
+      });
+    } else {
+      await this.cacheManager.del('key');
+    }
   }
 
   async setMasterPassword(password: string) {
@@ -43,6 +47,10 @@ export class CredentialStoreService {
     } catch {
       throw new ForbiddenException();
     }
+  }
+
+  async unsetMasterPassword() {
+    await this.setCachedKey(undefined);
   }
 
   async changeMasterPassword(oldPassword: string, newPassword: string) {

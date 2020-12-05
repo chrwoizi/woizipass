@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { WoizCredentials } from '@woizpass/api-interfaces';
 import { MatTableDataSource } from '@angular/material/table';
@@ -32,11 +32,12 @@ export class AppComponent {
     public dialog: MatDialog,
     readonly sessionService: SessionService
   ) {
-    this.loading = true;
-    this.reload();
-    this.sessionService.loggedOut.subscribe(() => {
+    if (this.sessionService.isLoggedIn()) {
+      this.loading = true;
+      this.reload();
+    } else {
       this.unauthorized = true;
-    });
+    }
   }
 
   private reload() {
@@ -126,6 +127,18 @@ export class AppComponent {
       (e) => {
         this.loading = false;
         this.masterPassword = undefined;
+        this.unauthorized = true;
+        this.error = e.message || e;
+      }
+    );
+  }
+
+  logout() {
+    this.sessionService.logout().subscribe(
+      () => {
+        this.unauthorized = true;
+      },
+      (e) => {
         this.unauthorized = true;
         this.error = e.message || e;
       }

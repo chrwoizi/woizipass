@@ -26,4 +26,8 @@ export class AuthService {
       idToken: this.jwtService.sign(token),
     };
   }
+
+  async logout(): Promise<void> {
+    await this.credentialStoreService.unsetMasterPassword();
+  }
 }
