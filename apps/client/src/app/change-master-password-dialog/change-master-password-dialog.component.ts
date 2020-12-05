@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ChangeMasterPassword } from '@woizpass/api-interfaces';
+import { SessionService } from '../auth/session.service';
 
 @Component({
   selector: 'woizpass-change-master-password-dialog',
@@ -17,7 +18,8 @@ export class ChangeMasterPasswordDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<ChangeMasterPasswordDialogComponent>,
-    private http: HttpClient
+    private http: HttpClient,
+    private sessionService: SessionService
   ) {}
 
   keyDown(event) {
@@ -36,6 +38,7 @@ export class ChangeMasterPasswordDialogComponent {
 
     post$.subscribe(
       () => {
+        this.sessionService.logout();
         this.dialogRef.close();
       },
       (e) => {

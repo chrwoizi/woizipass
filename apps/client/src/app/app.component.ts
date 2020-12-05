@@ -8,6 +8,7 @@ import { SetPasswordDialogComponent } from './set-password-dialog/set-password-d
 import { WoizCredentialViewModel } from './WoizCredentialViewModel';
 import { ChangeMasterPasswordDialogComponent } from './change-master-password-dialog/change-master-password-dialog.component';
 import { DeleteCredentialDialogComponent } from './delete-credential-dialog/delete-credential-dialog.component';
+import { SessionService } from './auth/session.service';
 
 @Component({
   selector: 'woizpass-root',
@@ -26,9 +27,16 @@ export class AppComponent {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   response$ = this.http.get<WoizCredentials>('/api/credential');
-  constructor(private http: HttpClient, public dialog: MatDialog) {
+  constructor(
+    private http: HttpClient,
+    public dialog: MatDialog,
+    readonly sessionService: SessionService
+  ) {
     this.loading = true;
     this.reload();
+    this.sessionService.loggedOut.subscribe(() => {
+      this.unauthorized = true;
+    });
   }
 
   private reload() {
@@ -44,7 +52,7 @@ export class AppComponent {
       },
       (e) => {
         this.loading = false;
-        if (e.status === 401) {
+        if (e.status === 403) {
           this.unauthorized = true;
         } else {
           this.error = e.message || e;
@@ -99,12 +107,6 @@ export class AppComponent {
     });
   }
 
-  setMasterPassword(password: string) {
-    return this.http.post('/api/set-master', {
-      password: password,
-    });
-  }
-
   masterPasswordKeyDown(event) {
     if (event.keyCode === 13) {
       this.login();
@@ -114,9 +116,7 @@ export class AppComponent {
   login() {
     this.loading = true;
 
-    const post$ = this.setMasterPassword(this.masterPassword);
-
-    post$.subscribe(
+    this.sessionService.login(this.masterPassword).subscribe(
       () => {
         this.masterPassword = undefined;
         this.unauthorized = false;

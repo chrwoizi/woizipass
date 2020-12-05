@@ -21,3 +21,18 @@ export interface ChangeMasterPassword {
   oldPassword: string;
   newPassword: string;
 }
+
+export class AuthRequest {
+  readonly username: string;
+  readonly password: string;
+}
+
+export class AuthResponse {
+  readonly idToken: string;
+}
+
+export class User {}
+
+export class AuthTokenPayload {
+  app: 'woizpass';
+}

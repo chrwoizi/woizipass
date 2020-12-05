@@ -20,6 +20,7 @@ import { ChangeMasterPasswordDialogComponent } from './change-master-password-di
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { PasswordGeneratorComponent } from './password-generator/password-generator.component';
 import { DeleteCredentialDialogComponent } from './delete-credential-dialog/delete-credential-dialog.component';
+import { AuthModule } from './auth/auth.module';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { DeleteCredentialDialogComponent } from './delete-credential-dialog/dele
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
+    AuthModule,
   ],
   exports: [],
   providers: [],
