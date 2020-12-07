@@ -1,22 +1,19 @@
 import { HttpClient } from '@angular/common/http';
-import {
-  Component,
-  EventEmitter,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import {
   GetPasswordResponse,
   WoizCredential,
   WoizCredentials,
 } from '@woizpass/api-interfaces';
-import { ChangeMasterPasswordDialogComponent } from '../change-master-password-dialog/change-master-password-dialog.component';
+import { Observable } from 'rxjs';
 import { DeleteCredentialDialogComponent } from '../delete-credential-dialog/delete-credential-dialog.component';
 import { UpdateCredentialDialogComponent } from '../update-credential-dialog/update-credential-dialog.component';
+
+interface WoizCredentialWithLoading extends WoizCredential {
+  loading: boolean;
+}
 
 @Component({
   selector: 'woizpass-credential-table',
@@ -32,11 +29,10 @@ export class CredentialTableComponent {
     'buttons',
   ];
 
-  dataSource: MatTableDataSource<WoizCredential>;
+  dataSource: MatTableDataSource<WoizCredentialWithLoading>;
+  observableData: Observable<WoizCredentialWithLoading[]>;
   loading = false;
   error: string;
-
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   @Output() onUnauthorizedError = new EventEmitter<void>();
 
@@ -49,10 +45,10 @@ export class CredentialTableComponent {
     this.http.get<WoizCredentials>('/api/credential').subscribe(
       (response) => {
         this.loading = false;
-        this.dataSource = new MatTableDataSource<WoizCredential>(
-          response.credentials
+        this.dataSource = new MatTableDataSource<WoizCredentialWithLoading>(
+          response.credentials as WoizCredentialWithLoading[]
         );
-        this.dataSource.sort = this.sort;
+        this.observableData = this.dataSource.connect();
       },
       (e) => {
         this.loading = false;
@@ -85,6 +81,7 @@ export class CredentialTableComponent {
     dialogRef.componentInstance.provider = row.provider;
     dialogRef.componentInstance.email = row.email;
     dialogRef.componentInstance.username = row.username;
+    dialogRef.componentInstance.comment = row.comment;
 
     dialogRef.afterClosed().subscribe(() => this.reload());
   }
@@ -95,15 +92,21 @@ export class CredentialTableComponent {
     });
 
     dialogRef.componentInstance.providers = this.unique(
-      this.dataSource.data.map((x) => x.provider)
+      this.dataSource.data
+        .map((x) => x.provider)
+        .filter((x) => typeof x === 'string' && x.length > 0)
     );
 
     dialogRef.componentInstance.emails = this.unique(
-      this.dataSource.data.map((x) => x.email)
+      this.dataSource.data
+        .map((x) => x.email)
+        .filter((x) => typeof x === 'string' && x.length > 0)
     );
 
     dialogRef.componentInstance.usernames = this.unique(
-      this.dataSource.data.map((x) => x.username)
+      this.dataSource.data
+        .map((x) => x.username)
+        .filter((x) => typeof x === 'string' && x.length > 0)
     );
 
     return dialogRef;
@@ -130,45 +133,45 @@ export class CredentialTableComponent {
     });
   }
 
-  show(credential: WoizCredential) {
-    this.loading = true;
+  show(credential: WoizCredentialWithLoading) {
+    credential.loading = true;
     const response$ = this.http.get<GetPasswordResponse>(
       '/api/credential/' + credential.id
     );
 
     response$.subscribe(
       (response) => {
-        this.loading = false;
+        credential.loading = false;
         credential.password = response.password;
       },
       (e) => {
-        this.loading = false;
+        credential.loading = false;
       }
     );
   }
 
-  hide(credential: WoizCredential) {
+  hide(credential: WoizCredentialWithLoading) {
     credential.password = undefined;
   }
 
-  copy(credential: WoizCredential) {
+  copy(credential: WoizCredentialWithLoading) {
     if (credential.password) {
       this.copyText(credential.password);
       return;
     }
 
-    this.loading = true;
+    credential.loading = true;
     const response$ = this.http.get<GetPasswordResponse>(
       '/api/credential/' + credential.id
     );
 
     response$.subscribe(
       (response) => {
-        this.loading = false;
+        credential.loading = false;
         this.copyText(response.password);
       },
       (e) => {
-        this.loading = false;
+        credential.loading = false;
       }
     );
   }

@@ -28,6 +28,7 @@ export class CredentialController {
   @UseGuards(AuthAccessGuard)
   @Get(':id')
   async getPassword(@Param('id') id: string): Promise<GetPasswordResponse> {
+    await new Promise((r) => setTimeout(r, 1000));
     return { password: await this.credentialService.getPassword(id) };
   }
 

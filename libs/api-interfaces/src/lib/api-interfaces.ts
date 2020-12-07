@@ -4,6 +4,7 @@ export interface WoizCredential {
   email?: string;
   username?: string;
   password?: string;
+  comment?: string;
 }
 
 export interface WoizCredentials {

@@ -23,6 +23,7 @@ import { DeleteCredentialDialogComponent } from './delete-credential-dialog/dele
 import { AuthModule } from './auth/auth.module';
 import { CredentialTableComponent } from './credential-table/credential-table.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     AuthModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
+    MatCardModule,
   ],
   exports: [],
   providers: [],

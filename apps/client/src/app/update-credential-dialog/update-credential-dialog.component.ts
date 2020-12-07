@@ -16,6 +16,7 @@ export class UpdateCredentialDialogComponent {
   email: string;
   username: string;
   password: string;
+  comment: string;
 
   loading = false;
   error?: string;
@@ -79,7 +80,12 @@ export class UpdateCredentialDialogComponent {
   }
 
   keyDown(event) {
-    if (event.keyCode === 13) {
+    if (
+      event.keyCode === 13 &&
+      this.provider &&
+      (this.email || this.username) &&
+      (this.id || this.password)
+    ) {
       this.submit();
     }
   }
@@ -93,6 +99,7 @@ export class UpdateCredentialDialogComponent {
       email: this.email,
       username: this.username,
       password: this.password,
+      comment: this.comment,
     });
 
     post$.subscribe(

@@ -31,16 +31,16 @@
     <div *ngIf="!unauthorized && !error">
       <div>
         <button
-          class="icon-button"
           mat-raised-button
           color="primary"
+          class="new"
           (click)="create()"
         >
           NEW
         </button>
         <button
-          class="icon-button"
           mat-raised-button
+          class="logout"
           style="float: right"
           color="secondary"
           (click)="logout()"
@@ -48,8 +48,8 @@
           LOGOUT
         </button>
         <button
-          class="icon-button"
           mat-raised-button
+          class="change-master"
           style="float: right"
           color="secondary"
           (click)="openChangeMasterPasswordDialog()"
