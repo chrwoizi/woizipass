@@ -79,18 +79,14 @@ export class UpdateCredentialDialogComponent {
     );
   }
 
-  keyDown(event) {
-    if (
-      event.keyCode === 13 &&
-      this.provider &&
-      (this.email || this.username) &&
-      (this.id || this.password)
-    ) {
-      this.submit();
-    }
-  }
-
   submit() {
+    if (
+      !this.provider ||
+      !(this.email || this.username) ||
+      (!this.id && !this.password)
+    )
+      return;
+
     this.loading = true;
 
     const post$ = this.http.post('/api/credential', {
