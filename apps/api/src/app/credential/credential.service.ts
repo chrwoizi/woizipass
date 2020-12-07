@@ -10,11 +10,7 @@ export class CredentialService {
   async getCredentials(): Promise<WoizCredentials> {
     const credentials = await this.credentialStoreService.load();
     return {
-      credentials: credentials.map((x) => ({
-        id: x.id,
-        provider: x.provider,
-        username: x.username,
-      })),
+      credentials: credentials.map((x) => ({ ...x, password: undefined })),
     };
   }
 

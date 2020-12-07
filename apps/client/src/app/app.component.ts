@@ -16,7 +16,13 @@ import { SessionService } from './auth/session.service';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  displayedColumns: string[] = ['provider', 'username', 'password', 'buttons'];
+  displayedColumns: string[] = [
+    'provider',
+    'email',
+    'username',
+    'password',
+    'buttons',
+  ];
 
   dataSource: MatTableDataSource<WoizCredentialViewModel>;
   loading = false;
@@ -75,6 +81,7 @@ export class AppComponent {
 
     dialogRef.componentInstance.id = row.credential.id;
     dialogRef.componentInstance.provider = row.credential.provider;
+    dialogRef.componentInstance.email = row.credential.email;
     dialogRef.componentInstance.username = row.credential.username;
 
     dialogRef.afterClosed().subscribe(() => this.reload());
@@ -93,6 +100,7 @@ export class AppComponent {
 
     dialogRef.componentInstance.id = row.credential.id;
     dialogRef.componentInstance.provider = row.credential.provider;
+    dialogRef.componentInstance.email = row.credential.email;
     dialogRef.componentInstance.username = row.credential.username;
 
     dialogRef.afterClosed().subscribe(() => {

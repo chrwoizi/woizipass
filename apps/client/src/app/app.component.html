@@ -63,7 +63,7 @@
         <input
           matInput
           (keyup)="applyFilter($event)"
-          placeholder="provider or username"
+          placeholder="provider, email, username"
           #input
         />
       </mat-form-field>
@@ -74,6 +74,13 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Provider</th>
             <td mat-cell *matCellDef="let row">
               {{ row.credential.provider }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.credential.email }}
             </td>
           </ng-container>
 

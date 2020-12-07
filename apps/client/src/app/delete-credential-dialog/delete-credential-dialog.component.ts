@@ -10,6 +10,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 export class DeleteCredentialDialogComponent {
   id: string;
   provider: string;
+  email: string;
   username: string;
   password: string;
 

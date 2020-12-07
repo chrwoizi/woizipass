@@ -1,6 +1,7 @@
 export interface WoizCredential {
   id?: string;
   provider?: string;
+  email?: string;
   username?: string;
   password?: string;
 }

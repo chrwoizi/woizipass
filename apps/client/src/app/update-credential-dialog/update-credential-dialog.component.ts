@@ -10,6 +10,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 export class UpdateCredentialDialogComponent {
   id: string;
   provider: string;
+  email: string;
   username: string;
   password: string;
 
@@ -33,6 +34,7 @@ export class UpdateCredentialDialogComponent {
     const post$ = this.http.post('/api/credential', {
       id: this.id,
       provider: this.provider,
+      email: this.email,
       username: this.username,
       password: this.password,
     });
