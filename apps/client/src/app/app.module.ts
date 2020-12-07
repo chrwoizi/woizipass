@@ -13,7 +13,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { UpdateCredentialDialogComponent } from './update-credential-dialog/update-credential-dialog.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ChangeMasterPasswordDialogComponent } from './change-master-password-dialog/change-master-password-dialog.component';
@@ -22,6 +22,7 @@ import { PasswordGeneratorComponent } from './password-generator/password-genera
 import { DeleteCredentialDialogComponent } from './delete-credential-dialog/delete-credential-dialog.component';
 import { AuthModule } from './auth/auth.module';
 import { CredentialTableComponent } from './credential-table/credential-table.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,8 @@ import { CredentialTableComponent } from './credential-table/credential-table.co
     MatIconModule,
     MatTooltipModule,
     AuthModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
   ],
   exports: [],
   providers: [],

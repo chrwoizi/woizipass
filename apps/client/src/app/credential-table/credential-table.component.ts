@@ -70,10 +70,16 @@ export class CredentialTableComponent {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  openUpdateCredentialDialog(row: WoizCredential) {
-    const dialogRef = this.dialog.open(UpdateCredentialDialogComponent, {
-      restoreFocus: false,
+  create() {
+    const dialogRef = this.createEditDialog();
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.reload();
     });
+  }
+
+  edit(row: WoizCredential) {
+    const dialogRef = this.createEditDialog();
 
     dialogRef.componentInstance.id = row.id;
     dialogRef.componentInstance.provider = row.provider;
@@ -81,6 +87,26 @@ export class CredentialTableComponent {
     dialogRef.componentInstance.username = row.username;
 
     dialogRef.afterClosed().subscribe(() => this.reload());
+  }
+
+  private createEditDialog() {
+    const dialogRef = this.dialog.open(UpdateCredentialDialogComponent, {
+      restoreFocus: false,
+    });
+
+    dialogRef.componentInstance.providers = this.unique(
+      this.dataSource.data.map((x) => x.provider)
+    );
+
+    dialogRef.componentInstance.emails = this.unique(
+      this.dataSource.data.map((x) => x.email)
+    );
+
+    dialogRef.componentInstance.usernames = this.unique(
+      this.dataSource.data.map((x) => x.username)
+    );
+
+    return dialogRef;
   }
 
   openDeleteDialog(row: WoizCredential) {
@@ -98,13 +124,9 @@ export class CredentialTableComponent {
     });
   }
 
-  create() {
-    const dialogRef = this.dialog.open(UpdateCredentialDialogComponent, {
-      restoreFocus: false,
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      this.reload();
+  unique(a) {
+    return a.sort().filter(function (value, index, array) {
+      return index === 0 || value !== array[index - 1];
     });
   }
 
