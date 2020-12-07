@@ -3,11 +3,11 @@ import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'woizpass-set-password-dialog',
-  templateUrl: './set-password-dialog.component.html',
-  styleUrls: ['./set-password-dialog.component.css'],
+  selector: 'woizpass-update-credential-dialog',
+  templateUrl: './update-credential-dialog.component.html',
+  styleUrls: ['./update-credential-dialog.component.css'],
 })
-export class SetPasswordDialogComponent {
+export class UpdateCredentialDialogComponent {
   id: string;
   provider: string;
   username: string;
@@ -17,7 +17,7 @@ export class SetPasswordDialogComponent {
   error?: string;
 
   constructor(
-    public dialogRef: MatDialogRef<SetPasswordDialogComponent>,
+    public dialogRef: MatDialogRef<UpdateCredentialDialogComponent>,
     private http: HttpClient
   ) {}
 

@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { WoizCredentials } from '@woizpass/api-interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
-import { SetPasswordDialogComponent } from './set-password-dialog/set-password-dialog.component';
+import { UpdateCredentialDialogComponent } from './update-credential-dialog/update-credential-dialog.component';
 import { WoizCredentialViewModel } from './WoizCredentialViewModel';
 import { ChangeMasterPasswordDialogComponent } from './change-master-password-dialog/change-master-password-dialog.component';
 import { DeleteCredentialDialogComponent } from './delete-credential-dialog/delete-credential-dialog.component';
@@ -68,14 +68,16 @@ export class AppComponent {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  openSetPasswordDialog(row: WoizCredentialViewModel) {
-    const dialogRef = this.dialog.open(SetPasswordDialogComponent, {
+  openUpdateCredentialDialog(row: WoizCredentialViewModel) {
+    const dialogRef = this.dialog.open(UpdateCredentialDialogComponent, {
       restoreFocus: false,
     });
 
     dialogRef.componentInstance.id = row.credential.id;
     dialogRef.componentInstance.provider = row.credential.provider;
     dialogRef.componentInstance.username = row.credential.username;
+
+    dialogRef.afterClosed().subscribe(() => this.reload());
   }
 
   openChangeMasterPasswordDialog() {
@@ -99,7 +101,7 @@ export class AppComponent {
   }
 
   create() {
-    const dialogRef = this.dialog.open(SetPasswordDialogComponent, {
+    const dialogRef = this.dialog.open(UpdateCredentialDialogComponent, {
       restoreFocus: false,
     });
 

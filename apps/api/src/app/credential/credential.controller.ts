@@ -33,16 +33,11 @@ export class CredentialController {
 
   @UseGuards(AuthAccessGuard)
   @Post()
-  async setPassword(
+  async update(
     @Body()
     body: WoizCredential
   ): Promise<void> {
-    await this.credentialService.setPassword(
-      body.id,
-      body.provider,
-      body.username,
-      body.password
-    );
+    await this.credentialService.update(body);
   }
 
   @UseGuards(AuthAccessGuard)

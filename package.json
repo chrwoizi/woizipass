@@ -7,7 +7,7 @@
     "postinstall": "node skip-postinstall.js || (node ./decorate-angular-cli.js && ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points)",
     "nx": "nx",
     "start": "ng serve",
-    "start:api": "npm run nx -- serve api",
+    "start:api": "ENV JWT_SECRET=test npm run nx -- serve api",
     "start:client": "npm run nx -- serve client",
     "build": "ng build",
     "test": "ng test",

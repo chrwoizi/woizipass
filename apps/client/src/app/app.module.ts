@@ -12,7 +12,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
-import { SetPasswordDialogComponent } from './set-password-dialog/set-password-dialog.component';
+import { UpdateCredentialDialogComponent } from './update-credential-dialog/update-credential-dialog.component';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,7 +25,7 @@ import { AuthModule } from './auth/auth.module';
 @NgModule({
   declarations: [
     AppComponent,
-    SetPasswordDialogComponent,
+    UpdateCredentialDialogComponent,
     ChangeMasterPasswordDialogComponent,
     PasswordGeneratorComponent,
     DeleteCredentialDialogComponent,

@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { WoizCredentials } from '@woizpass/api-interfaces';
+import { WoizCredential, WoizCredentials } from '@woizpass/api-interfaces';
 import { v4 } from 'uuid';
 import { CredentialStoreService } from '../credential-store/credential-store.service';
 
@@ -24,21 +24,18 @@ export class CredentialService {
     return item?.password;
   }
 
-  async setPassword(
-    id: string,
-    provider: string,
-    username: string,
-    password: string
-  ) {
+  async update(credential: WoizCredential) {
     const credentials = await this.credentialStoreService.load();
-    const item = credentials.find((x) => x.id === id);
-    if (item) item.password = password;
-    else {
+    if (credential.id) {
+      const item = credentials.find((x) => x.id === credential.id);
+      if (!item) {
+        throw new NotFoundException();
+      }
+      Object.assign(item, { ...credential, id: item.id });
+    } else {
       credentials.push({
+        ...credential,
         id: v4(),
-        provider: provider,
-        username: username,
-        password: password,
       });
     }
     await this.credentialStoreService.save(credentials);
@@ -48,8 +45,6 @@ export class CredentialService {
     const credentials = await this.credentialStoreService.load();
 
     const item = credentials.find((x) => x.id === id);
-    console.log(id);
-    console.log(item);
     if (!item) {
       throw new NotFoundException();
     }
