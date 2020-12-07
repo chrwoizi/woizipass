@@ -21,6 +21,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { PasswordGeneratorComponent } from './password-generator/password-generator.component';
 import { DeleteCredentialDialogComponent } from './delete-credential-dialog/delete-credential-dialog.component';
 import { AuthModule } from './auth/auth.module';
+import { CredentialTableComponent } from './credential-table/credential-table.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { AuthModule } from './auth/auth.module';
     ChangeMasterPasswordDialogComponent,
     PasswordGeneratorComponent,
     DeleteCredentialDialogComponent,
+    CredentialTableComponent,
   ],
   imports: [
     BrowserModule,
