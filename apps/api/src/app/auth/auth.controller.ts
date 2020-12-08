@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Post } from '@nestjs/common';
+import { Controller, UseGuards, Post, Req } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthResponse } from '@woizipass/api-interfaces';
 import { AuthAccessGuard } from './auth-access.guard';
@@ -10,8 +10,8 @@ export class AuthController {
 
   @UseGuards(AuthGuard('local'))
   @Post('login')
-  login(): AuthResponse {
-    return this.authService.login();
+  async login(@Req() req): Promise<AuthResponse> {
+    return await this.authService.createJwtToken(req.user?.userId);
   }
 
   @UseGuards(AuthAccessGuard)

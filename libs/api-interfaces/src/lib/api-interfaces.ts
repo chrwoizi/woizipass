@@ -34,10 +34,13 @@ export class AuthResponse {
   readonly idToken: string;
 }
 
-export class User {}
+export class User {
+  userId: string;
+}
 
 export class AuthTokenPayload {
   app: 'woizipass';
+  userId: string;
 }
 
 export interface BackupRequest {

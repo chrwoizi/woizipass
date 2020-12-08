@@ -3,10 +3,11 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { jwtConstants } from './auth.config';
 import { AuthTokenPayload } from '@woizipass/api-interfaces';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private readonly authService: AuthService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -19,6 +20,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       console.log(payload);
       throw new Error();
     }
+
+    if (!payload.userId) {
+      throw new Error();
+    }
+
+    if (!(await this.authService.validateUserId(payload.userId))) {
+      throw new Error();
+    }
+
     return { app: payload.app };
   }
 }
