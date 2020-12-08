@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import {
   AuthResponse,
@@ -14,20 +14,29 @@ export class AuthService {
     private readonly credentialStoreService: CredentialStoreService
   ) {}
 
-  async validateUser(password: string): Promise<User> {
-    await this.credentialStoreService.setMasterPassword(password);
-    const user: User = {};
+  async validatePassword(password: string): Promise<User> {
+    const userId = await this.credentialStoreService.login(password);
+    const user: User = { userId: userId };
     return user;
   }
 
-  login(): AuthResponse {
-    const token: AuthTokenPayload = { app: 'woizipass' };
+  async createJwtToken(userId: string): Promise<AuthResponse> {
+    const isLoggedIn = await this.credentialStoreService.isLoggedIn(userId);
+    if (!isLoggedIn) {
+      throw new ForbiddenException();
+    }
+
+    const token: AuthTokenPayload = { app: 'woizipass', userId: userId };
     return {
       idToken: this.jwtService.sign(token),
     };
   }
 
+  async validateUserId(userId: string): Promise<boolean> {
+    return await this.credentialStoreService.isLoggedIn(userId);
+  }
+
   async logout(): Promise<void> {
-    await this.credentialStoreService.unsetMasterPassword();
+    await this.credentialStoreService.logout();
   }
 }

@@ -11,12 +11,14 @@ import { ModeOfOperation } from 'aes-js';
 import { createHash } from 'crypto';
 import * as fs from 'fs';
 import { Cache } from 'cache-manager';
+import { v4 } from 'uuid';
 
 @Injectable()
 @Global()
 export class CredentialStoreService {
-  static databaseDir = 'data';
-  static databasePath = 'data/database';
+  static readonly databaseDir = 'data';
+  static readonly databasePath = 'data/database';
+  static readonly ttlSeconds = 10 * 60;
 
   constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 
@@ -28,14 +30,24 @@ export class CredentialStoreService {
   private async setCachedKey(key: Buffer) {
     if (key) {
       await this.cacheManager.set('key', key.toString('base64'), {
-        ttl: 60 * 60 * 1000,
+        ttl: CredentialStoreService.ttlSeconds,
       });
     } else {
       await this.cacheManager.del('key');
     }
   }
 
-  async setMasterPassword(password: string) {
+  async isLoggedIn(userId: string): Promise<boolean> {
+    const key = await this.getCachedKey();
+    if (!key) return false;
+
+    const userExists = await this.cacheManager.get(userId);
+    if (!userExists) return false;
+
+    return true;
+  }
+
+  async login(password: string): Promise<string> {
     if (!password) {
       throw new ForbiddenException();
     }
@@ -47,14 +59,21 @@ export class CredentialStoreService {
       if (typeof credentials?.length !== 'number') {
         throw new ForbiddenException();
       }
+
       await this.setCachedKey(newKey);
+
+      const userId = v4();
+      this.cacheManager.set(userId, true, {
+        ttl: CredentialStoreService.ttlSeconds,
+      });
+      return userId;
     } catch {
       throw new ForbiddenException();
     }
   }
 
-  async unsetMasterPassword() {
-    await this.setCachedKey(undefined);
+  async logout() {
+    this.cacheManager.reset();
   }
 
   async changeMasterPassword(oldPassword: string, newPassword: string) {
