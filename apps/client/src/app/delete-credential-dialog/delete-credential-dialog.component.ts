@@ -29,7 +29,7 @@ export class DeleteCredentialDialogComponent {
 
     del$.subscribe(
       () => {
-        this.dialogRef.close();
+        this.dialogRef.close(true);
       },
       (e) => {
         this.loading = false;
