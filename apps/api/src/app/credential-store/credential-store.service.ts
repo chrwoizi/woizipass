@@ -43,7 +43,10 @@ export class CredentialStoreService {
     const newKey = createHash('sha256').update(password, 'utf8').digest();
 
     try {
-      this.load(newKey);
+      const credentials = await this.load(newKey);
+      if (typeof credentials?.length !== 'number') {
+        throw new ForbiddenException();
+      }
       await this.setCachedKey(newKey);
     } catch {
       throw new ForbiddenException();

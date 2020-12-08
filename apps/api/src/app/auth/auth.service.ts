@@ -11,13 +11,9 @@ export class AuthService {
   ) {}
 
   async validateUser(password: string): Promise<User> {
-    try {
-      await this.credentialStoreService.setMasterPassword(password);
-      const user: User = {};
-      return user;
-    } catch (e) {
-      return null;
-    }
+    await this.credentialStoreService.setMasterPassword(password);
+    const user: User = {};
+    return user;
   }
 
   login(): AuthResponse {
