@@ -4,6 +4,7 @@ import {
   Global,
   Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { WoizCredential } from '@woizpass/api-interfaces';
 import { ModeOfOperation } from 'aes-js';
@@ -108,5 +109,13 @@ export class CredentialStoreService {
       fs.mkdirSync(CredentialStoreService.databaseDir);
     }
     fs.writeFileSync(CredentialStoreService.databasePath, encrypted);
+  }
+
+  async getFile(): Promise<Buffer> {
+    if (!fs.existsSync(CredentialStoreService.databasePath)) {
+      throw new NotFoundException();
+    }
+
+    return fs.readFileSync(CredentialStoreService.databasePath);
   }
 }

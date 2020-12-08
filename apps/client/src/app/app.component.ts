@@ -1,16 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {
-  GetPasswordResponse,
-  WoizCredential,
-  WoizCredentials,
-} from '@woizpass/api-interfaces';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
-import { UpdateCredentialDialogComponent } from './update-credential-dialog/update-credential-dialog.component';
 import { ChangeMasterPasswordDialogComponent } from './change-master-password-dialog/change-master-password-dialog.component';
-import { DeleteCredentialDialogComponent } from './delete-credential-dialog/delete-credential-dialog.component';
 import { SessionService } from './auth/session.service';
 import { CredentialTableComponent } from './credential-table/credential-table.component';
 
@@ -30,7 +21,8 @@ export class AppComponent {
 
   constructor(
     public dialog: MatDialog,
-    readonly sessionService: SessionService
+    readonly sessionService: SessionService,
+    readonly http: HttpClient
   ) {
     this.unauthorized = !this.sessionService.isLoggedIn();
   }
@@ -81,6 +73,29 @@ export class AppComponent {
       },
       (e) => {
         this.unauthorized = true;
+        this.error = e.message || e;
+      }
+    );
+  }
+
+  backup() {
+    this.loading = true;
+
+    const get$ = this.http.get('/api/file', {
+      responseType: 'arraybuffer',
+    });
+
+    get$.subscribe(
+      (data) => {
+        this.loading = false;
+        const anchor = document.createElement('a');
+        const blob = new Blob([data]);
+        anchor.href = window.URL.createObjectURL(blob);
+        anchor.download = 'credentials.aes';
+        anchor.click();
+      },
+      (e) => {
+        this.loading = false;
         this.error = e.message || e;
       }
     );

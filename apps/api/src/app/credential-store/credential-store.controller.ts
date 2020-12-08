@@ -1,5 +1,15 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ChangeMasterPassword } from '@woizpass/api-interfaces';
+import { Duplex } from 'stream';
 import { AuthAccessGuard } from '../auth/auth-access.guard';
 import { CredentialStoreService } from './credential-store.service';
 
@@ -18,5 +28,22 @@ export class CredentialStoreController {
       body.oldPassword,
       body.newPassword
     );
+  }
+
+  @UseGuards(AuthAccessGuard)
+  @HttpCode(HttpStatus.OK)
+  @Get('file')
+  async getFile(@Res() res) {
+    const buffer = await this.credentialStoreService.getFile();
+
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=credentials.aes`
+    );
+
+    let stream = new Duplex();
+    stream.push(buffer);
+    stream.push(null);
+    stream.pipe(res);
   }
 }

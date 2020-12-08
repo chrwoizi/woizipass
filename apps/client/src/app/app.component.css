@@ -131,15 +131,3 @@ summary {
   width: 16px;
   margin-right: 4px;
 }
-
-button.new {
-  margin: 0 8px 8px 0;
-}
-
-button.change-master {
-  margin: 0 8px 8px 0;
-}
-
-button.logout {
-  margin: 0 0 8px 0;
-}

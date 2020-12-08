@@ -39,23 +39,20 @@
           NEW
         </button>
         <button
-          mat-raised-button
-          class="logout"
+          mat-icon-button
+          [matMenuTriggerFor]="menu"
+          aria-label="Example icon-button with a menu"
           style="float: right"
-          color="secondary"
-          (click)="logout()"
         >
-          LOGOUT
+          <mat-icon>more_vert</mat-icon>
         </button>
-        <button
-          mat-raised-button
-          class="change-master"
-          style="float: right"
-          color="secondary"
-          (click)="openChangeMasterPasswordDialog()"
-        >
-          CHANGE MASTER PASSWORD
-        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="logout()">LOGOUT</button>
+          <button mat-menu-item (click)="openChangeMasterPasswordDialog()">
+            CHANGE MASTER PASSWORD
+          </button>
+          <button mat-menu-item (click)="backup()">BACKUP</button>
+        </mat-menu>
       </div>
       <br />
       <woizpass-credential-table
