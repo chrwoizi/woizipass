@@ -111,7 +111,19 @@ export class CredentialStoreService {
     fs.writeFileSync(CredentialStoreService.databasePath, encrypted);
   }
 
-  async getFile(): Promise<Buffer> {
+  async getFile(password: string): Promise<Buffer> {
+    if (!password) {
+      throw new ForbiddenException();
+    }
+
+    const key = createHash('sha256').update(password, 'utf8').digest();
+
+    try {
+      await this.load(key);
+    } catch {
+      throw new ForbiddenException();
+    }
+
     if (!fs.existsSync(CredentialStoreService.databasePath)) {
       throw new NotFoundException();
     }

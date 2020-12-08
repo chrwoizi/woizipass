@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ChangeMasterPasswordDialogComponent } from './change-master-password-dialog/change-master-password-dialog.component';
 import { SessionService } from './auth/session.service';
 import { CredentialTableComponent } from './credential-table/credential-table.component';
+import { BackupDialogComponent } from './backup-dialog/backup-dialog.component';
 
 @Component({
   selector: 'woizpass-root',
@@ -79,25 +80,8 @@ export class AppComponent {
   }
 
   backup() {
-    this.loading = true;
-
-    const get$ = this.http.get('/api/file', {
-      responseType: 'arraybuffer',
+    this.dialog.open(BackupDialogComponent, {
+      restoreFocus: false,
     });
-
-    get$.subscribe(
-      (data) => {
-        this.loading = false;
-        const anchor = document.createElement('a');
-        const blob = new Blob([data]);
-        anchor.href = window.URL.createObjectURL(blob);
-        anchor.download = 'credentials.aes';
-        anchor.click();
-      },
-      (e) => {
-        this.loading = false;
-        this.error = e.message || e;
-      }
-    );
   }
 }

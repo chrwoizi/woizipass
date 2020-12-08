@@ -8,7 +8,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ChangeMasterPassword } from '@woizpass/api-interfaces';
+import { BackupRequest, ChangeMasterPassword } from '@woizpass/api-interfaces';
 import { Duplex } from 'stream';
 import { AuthAccessGuard } from '../auth/auth-access.guard';
 import { CredentialStoreService } from './credential-store.service';
@@ -32,9 +32,9 @@ export class CredentialStoreController {
 
   @UseGuards(AuthAccessGuard)
   @HttpCode(HttpStatus.OK)
-  @Get('file')
-  async getFile(@Res() res) {
-    const buffer = await this.credentialStoreService.getFile();
+  @Post('file')
+  async getFile(@Res() res, @Body() body: BackupRequest) {
+    const buffer = await this.credentialStoreService.getFile(body.password);
 
     res.setHeader(
       'Content-Disposition',

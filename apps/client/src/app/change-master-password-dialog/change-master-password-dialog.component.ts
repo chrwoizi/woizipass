@@ -22,13 +22,9 @@ export class ChangeMasterPasswordDialogComponent {
     private sessionService: SessionService
   ) {}
 
-  keyDown(event) {
-    if (event.keyCode === 13) {
-      this.submit();
-    }
-  }
-
   submit() {
+    if (!this.oldPassword || !this.newPassword) return;
+
     this.loading = true;
 
     const post$ = this.http.post('/api/change-master', {

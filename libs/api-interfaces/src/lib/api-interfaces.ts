@@ -39,3 +39,7 @@ export class User {}
 export class AuthTokenPayload {
   app: 'woizpass';
 }
+
+export interface BackupRequest {
+  password: string;
+}

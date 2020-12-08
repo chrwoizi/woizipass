@@ -6,28 +6,13 @@
   <form (submit)="submit()" action="#">
     <mat-form-field class="fill">
       <input
-        name="oldPassword"
+        name="password"
         matInput
-        [(ngModel)]="oldPassword"
-        placeholder="old"
+        [(ngModel)]="password"
+        placeholder="master password"
         #input
       />
     </mat-form-field>
-    <br />
-    <mat-form-field class="fill">
-      <input
-        name="newPassword"
-        matInput
-        [(ngModel)]="newPassword"
-        placeholder="new"
-        #input
-        (focus)="$event.target.select()"
-      />
-    </mat-form-field>
-    <br />
-    <woizpass-password-generator
-      (generated)="newPassword = $event"
-    ></woizpass-password-generator>
     <br />
     <br />
     <button
@@ -36,7 +21,7 @@
       mat-raised-button
       color="primary"
       class="fill"
-      [disabled]="!oldPassword || !newPassword"
+      [disabled]="!password"
       (click)="submit()"
     >
       SAVE
