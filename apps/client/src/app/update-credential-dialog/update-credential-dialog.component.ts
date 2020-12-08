@@ -95,7 +95,7 @@ export class UpdateCredentialDialogComponent {
 
     post$.subscribe(
       () => {
-        this.dialogRef.close();
+        this.dialogRef.close(true);
       },
       (e) => {
         this.loading = false;

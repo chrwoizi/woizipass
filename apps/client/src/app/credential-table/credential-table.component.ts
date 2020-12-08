@@ -29,11 +29,11 @@ export class CredentialTableComponent {
   @Output() onUnauthorizedError = new EventEmitter<void>();
 
   constructor(private http: HttpClient, public dialog: MatDialog) {
-    this.loading = true;
     this.reload();
   }
 
   private reload() {
+    this.loading = true;
     this.http.get<WoizCredentials>('/api/credential').subscribe(
       (response) => {
         this.loading = false;
@@ -75,7 +75,9 @@ export class CredentialTableComponent {
     dialogRef.componentInstance.username = row.username;
     dialogRef.componentInstance.comment = row.comment;
 
-    dialogRef.afterClosed().subscribe(() => this.reload());
+    dialogRef.afterClosed().subscribe((success: boolean) => {
+      if (success) this.reload();
+    });
   }
 
   private createEditDialog() {
@@ -114,8 +116,8 @@ export class CredentialTableComponent {
     dialogRef.componentInstance.email = row.email;
     dialogRef.componentInstance.username = row.username;
 
-    dialogRef.afterClosed().subscribe(() => {
-      this.reload();
+    dialogRef.afterClosed().subscribe((success: boolean) => {
+      if (success) this.reload();
     });
   }
 
