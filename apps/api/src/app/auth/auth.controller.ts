@@ -1,6 +1,6 @@
 import { Controller, UseGuards, Post } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthResponse } from '@woizpass/api-interfaces';
+import { AuthResponse } from '@woizipass/api-interfaces';
 import { AuthAccessGuard } from './auth-access.guard';
 import { AuthService } from './auth.service';
 

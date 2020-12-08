@@ -11,7 +11,7 @@ import {
   GetPasswordResponse,
   WoizCredential,
   WoizCredentials,
-} from '@woizpass/api-interfaces';
+} from '@woizipass/api-interfaces';
 import { AuthAccessGuard } from '../auth/auth-access.guard';
 import { CredentialService } from './credential.service';
 

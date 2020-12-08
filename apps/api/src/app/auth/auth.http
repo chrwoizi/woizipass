@@ -1,10 +1,10 @@
 ###
 # @name login
-curl -X POST http://localhost:3333/api/login -d '{"username": "woizpass", "password": "test"}' -H "Content-Type: application/json"
+curl -X POST http://localhost:3333/api/login -d '{"username": "woizipass", "password": "test"}' -H "Content-Type: application/json"
 
 ###
 # @name unauthorized-login
-curl -X POST http://localhost:3333/api/login -d '{"username": "woizpass", "password": "xxx"}' -H "Content-Type: application/json"
+curl -X POST http://localhost:3333/api/login -d '{"username": "woizipass", "password": "xxx"}' -H "Content-Type: application/json"
 
 #### 
 # @name unauthorized-logout

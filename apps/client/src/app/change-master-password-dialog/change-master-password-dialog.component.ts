@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { ChangeMasterPassword } from '@woizpass/api-interfaces';
+import { ChangeMasterPassword } from '@woizipass/api-interfaces';
 import { SessionService } from '../auth/session.service';
 
 @Component({
-  selector: 'woizpass-change-master-password-dialog',
+  selector: 'woizipass-change-master-password-dialog',
   templateUrl: './change-master-password-dialog.component.html',
   styleUrls: ['./change-master-password-dialog.component.css'],
 })

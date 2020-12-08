@@ -2,7 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { generateRandomPassword } from '../password';
 
 @Component({
-  selector: 'woizpass-password-generator',
+  selector: 'woizipass-password-generator',
   templateUrl: './password-generator.component.html',
   styleUrls: ['./password-generator.component.css'],
 })

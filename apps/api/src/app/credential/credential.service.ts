@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { WoizCredential, WoizCredentials } from '@woizpass/api-interfaces';
+import { WoizCredential, WoizCredentials } from '@woizipass/api-interfaces';
 import { v4 } from 'uuid';
 import { CredentialStoreService } from '../credential-store/credential-store.service';
 

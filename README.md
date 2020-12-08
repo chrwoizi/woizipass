@@ -1,5 +1,5 @@
-# woizpass
+# woizipass
 
 A personal lightweight password manager.
 
-Tracking the development status on [Trello](https://trello.com/b/nlZMaXPm/woizpass).
+Tracking the development status on [Trello](https://trello.com/b/nlZMaXPm/woizipass).

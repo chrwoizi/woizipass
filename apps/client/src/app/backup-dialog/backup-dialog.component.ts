@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'woizpass-backup-dialog',
+  selector: 'woizipass-backup-dialog',
   templateUrl: './backup-dialog.component.html',
   styleUrls: ['./backup-dialog.component.css'],
 })

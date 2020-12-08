@@ -30,15 +30,15 @@
       "configurations": [
         {
           "name": "api",
-          "folder": "woizpass"
+          "folder": "woizipass"
         },
         {
           "name": "client",
-          "folder": "woizpass"
+          "folder": "woizipass"
         },
         {
           "name": "chrome",
-          "folder": "woizpass"
+          "folder": "woizipass"
         }
       ]
     }

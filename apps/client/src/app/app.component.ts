@@ -7,7 +7,7 @@ import { CredentialTableComponent } from './credential-table/credential-table.co
 import { BackupDialogComponent } from './backup-dialog/backup-dialog.component';
 
 @Component({
-  selector: 'woizpass-root',
+  selector: 'woizipass-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
