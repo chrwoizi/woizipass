@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'woizpass-delete-credential-dialog',
+  selector: 'woizipass-delete-credential-dialog',
   templateUrl: './delete-credential-dialog.component.html',
   styleUrls: ['./delete-credential-dialog.component.css'],
 })

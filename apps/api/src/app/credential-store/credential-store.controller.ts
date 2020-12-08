@@ -8,7 +8,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { BackupRequest, ChangeMasterPassword } from '@woizpass/api-interfaces';
+import { BackupRequest, ChangeMasterPassword } from '@woizipass/api-interfaces';
 import { Duplex } from 'stream';
 import { AuthAccessGuard } from '../auth/auth-access.guard';
 import { CredentialStoreService } from './credential-store.service';

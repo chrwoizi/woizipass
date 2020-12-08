@@ -6,7 +6,7 @@ import {
   GetPasswordResponse,
   WoizCredential,
   WoizCredentials,
-} from '@woizpass/api-interfaces';
+} from '@woizipass/api-interfaces';
 import { Observable } from 'rxjs';
 import { DeleteCredentialDialogComponent } from '../delete-credential-dialog/delete-credential-dialog.component';
 import { UpdateCredentialDialogComponent } from '../update-credential-dialog/update-credential-dialog.component';
@@ -16,7 +16,7 @@ interface WoizCredentialWithLoading extends WoizCredential {
 }
 
 @Component({
-  selector: 'woizpass-credential-table',
+  selector: 'woizipass-credential-table',
   templateUrl: './credential-table.component.html',
   styleUrls: ['./credential-table.component.css'],
 })

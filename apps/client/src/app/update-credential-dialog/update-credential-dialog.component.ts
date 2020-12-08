@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
 @Component({
-  selector: 'woizpass-update-credential-dialog',
+  selector: 'woizipass-update-credential-dialog',
   templateUrl: './update-credential-dialog.component.html',
   styleUrls: ['./update-credential-dialog.component.css'],
 })

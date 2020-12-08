@@ -37,7 +37,7 @@ export class AuthResponse {
 export class User {}
 
 export class AuthTokenPayload {
-  app: 'woizpass';
+  app: 'woizipass';
 }
 
 export interface BackupRequest {

@@ -2,7 +2,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { jwtConstants } from './auth.config';
-import { AuthTokenPayload } from '@woizpass/api-interfaces';
+import { AuthTokenPayload } from '@woizipass/api-interfaces';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -15,7 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: AuthTokenPayload) {
-    if (payload.app !== 'woizpass') {
+    if (payload.app !== 'woizipass') {
       console.log(payload);
       throw new Error();
     }

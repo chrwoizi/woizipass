@@ -6,7 +6,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { WoizCredential } from '@woizpass/api-interfaces';
+import { WoizCredential } from '@woizipass/api-interfaces';
 import { ModeOfOperation } from 'aes-js';
 import { createHash } from 'crypto';
 import * as fs from 'fs';

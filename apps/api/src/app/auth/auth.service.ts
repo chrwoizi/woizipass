@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthResponse, AuthTokenPayload, User } from '@woizpass/api-interfaces';
+import {
+  AuthResponse,
+  AuthTokenPayload,
+  User,
+} from '@woizipass/api-interfaces';
 import { CredentialStoreService } from '../credential-store/credential-store.service';
 
 @Injectable()
@@ -17,7 +21,7 @@ export class AuthService {
   }
 
   login(): AuthResponse {
-    const token: AuthTokenPayload = { app: 'woizpass' };
+    const token: AuthTokenPayload = { app: 'woizipass' };
     return {
       idToken: this.jwtService.sign(token),
     };

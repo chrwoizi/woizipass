@@ -15,7 +15,7 @@ export class SessionService {
 
   login(password: string) {
     return this.http
-      .post('/api/login', { username: 'woizpass', password })
+      .post('/api/login', { username: 'woizipass', password })
       .pipe(
         tap((res) => this.setSession(res)),
         shareReplay()
