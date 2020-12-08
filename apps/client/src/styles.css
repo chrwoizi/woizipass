@@ -23,3 +23,7 @@ body {
   justify-content: center;
   align-items: center;
 }
+
+.mat-dialog-container {
+  height: auto !important;
+}
