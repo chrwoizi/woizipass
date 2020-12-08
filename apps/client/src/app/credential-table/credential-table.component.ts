@@ -21,14 +21,6 @@ interface WoizCredentialWithLoading extends WoizCredential {
   styleUrls: ['./credential-table.component.css'],
 })
 export class CredentialTableComponent {
-  displayedColumns: string[] = [
-    'provider',
-    'email',
-    'username',
-    'password',
-    'buttons',
-  ];
-
   dataSource: MatTableDataSource<WoizCredentialWithLoading>;
   observableData: Observable<WoizCredentialWithLoading[]>;
   loading = false;

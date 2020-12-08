@@ -80,12 +80,7 @@ export class UpdateCredentialDialogComponent {
   }
 
   submit() {
-    if (
-      !this.provider ||
-      !(this.email || this.username) ||
-      (!this.id && !this.password)
-    )
-      return;
+    if (!this.provider) return;
 
     this.loading = true;
 
