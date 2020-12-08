@@ -46,6 +46,7 @@ export class CredentialService {
         ...credential,
         id: item.id,
         accessedAt: item.accessedAt,
+        password: credential.password || item.password,
       });
     } else {
       credentials.push({
