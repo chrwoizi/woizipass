@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ChangeMasterPasswordDialogComponent } from './change-master-password-dialog/change-master-password-dialog.component';
 import { SessionService } from './auth/session.service';
 import { CredentialTableComponent } from './credential-table/credential-table.component';
-import { BackupDialogComponent } from './backup-dialog/backup-dialog.component';
+import { DownloadDialogComponent } from './download-dialog/download-dialog.component';
 
 @Component({
   selector: 'woizipass-root',
@@ -79,8 +79,8 @@ export class AppComponent {
     );
   }
 
-  backup() {
-    this.dialog.open(BackupDialogComponent, {
+  download() {
+    this.dialog.open(DownloadDialogComponent, {
       restoreFocus: false,
     });
   }

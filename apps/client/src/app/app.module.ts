@@ -24,7 +24,7 @@ import { AuthModule } from './auth/auth.module';
 import { CredentialTableComponent } from './credential-table/credential-table.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatCardModule } from '@angular/material/card';
-import { BackupDialogComponent } from './backup-dialog/backup-dialog.component';
+import { DownloadDialogComponent } from './download-dialog/download-dialog.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +34,7 @@ import { BackupDialogComponent } from './backup-dialog/backup-dialog.component';
     PasswordGeneratorComponent,
     DeleteCredentialDialogComponent,
     CredentialTableComponent,
-    BackupDialogComponent,
+    DownloadDialogComponent,
   ],
   imports: [
     BrowserModule,

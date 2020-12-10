@@ -3,18 +3,18 @@ import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'woizipass-backup-dialog',
-  templateUrl: './backup-dialog.component.html',
-  styleUrls: ['./backup-dialog.component.css'],
+  selector: 'woizipass-download-dialog',
+  templateUrl: './download-dialog.component.html',
+  styleUrls: ['./download-dialog.component.css'],
 })
-export class BackupDialogComponent {
+export class DownloadDialogComponent {
   password: string;
 
   loading = false;
   error?: string;
 
   constructor(
-    public dialogRef: MatDialogRef<BackupDialogComponent>,
+    public dialogRef: MatDialogRef<DownloadDialogComponent>,
     private http: HttpClient
   ) {}
 
