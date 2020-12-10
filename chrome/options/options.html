@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>woizipass</title>
+    <meta charset="UTF-8" />
+    <link href="uikit/css/uikit.gradient.css" rel="stylesheet" />
+    <link href="options.css" rel="stylesheet" />
+    <script src="../js/jquery.js"></script>
+    <script src="uikit/js/uikit.js"></script>
+    <script src="options.js"></script>
+  </head>
+
+  <body class="tm-background">
+    <div class="tm-middle">
+      <div class="uk-container uk-container-center">
+        <div class="uk-grid">
+          <div class="uk-width-1-1">
+            <article
+              class="uk-article uk-width-1-1 uk-width-large-4-5 uk-width-medium-6-7 uk-width-small-9-10"
+            >
+              <h1>woizipass chrome extension</h1>
+              <div class="uk-grid" data-uk-margin="{cls:'uk-margin-top'}">
+                <div class="uk-width-1-1">
+                  <div class="uk-panel uk-panel-box uk-panel-box-secondary">
+                    <form
+                      id="options"
+                      class="uk-form uk-form-horizontal"
+                      data-uk-margin="{cls:'uk-margin-top'}"
+                    >
+                      <fieldset>
+                        <div class="uk-form-row">
+                          <label class="uk-form-label" for="pass-phrase"
+                            >URL of woizipass</label
+                          >
+                          <div class="uk-form-controls">
+                            <input
+                              id="url"
+                              placeholder="http://woizipass.com"
+                              iclass="uk-form-large"
+                            />
+                          </div>
+                        </div>
+                      </fieldset>
+                      <div class="uk-form-controls">
+                        <div id="button-group" class="">
+                          <button
+                            id="save"
+                            class="uk-button"
+                            type="submit"
+                            data-action="save"
+                          >
+                            Save
+                          </button>
+                          <button
+                            class="uk-button"
+                            type="button"
+                            data-action="close"
+                          >
+                            Close
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

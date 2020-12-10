@@ -1,0 +1,41 @@
+{
+  "name": "woizipass",
+  "description": "woizipass",
+  "version": "1.0.0.0",
+  "manifest_version": 2,
+  "background": {
+    "page": "background.html"
+  },
+  "browser_action": {
+    "default_icon": {
+      "19": "icons/icon19.png",
+      "38": "icons/icon38.png"
+    },
+    "default_title": "woizipass",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "24": "icons/icon24.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "64": "icons/icon64.png",
+    "96": "icons/icon96.png",
+    "128": "icons/icon128.png",
+    "256": "icons/icon256.png"
+  },
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "storage",
+    "tabs",
+    "<all_urls>",
+    "notifications",
+    "webNavigation",
+    "https://*/*"
+  ],
+  "options_ui": {
+    "open_in_tab": true,
+    "page": "options/options.html"
+  }
+}
