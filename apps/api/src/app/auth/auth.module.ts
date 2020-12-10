@@ -14,7 +14,9 @@ const passportModule = PassportModule.register({ defaultStrategy: 'jwt' });
     passportModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '2 days' },
+      signOptions: {
+        expiresIn: jwtConstants.sessionTimeoutSeconds.toString() + ' seconds',
+      },
     }),
   ],
   controllers: [AuthController],
