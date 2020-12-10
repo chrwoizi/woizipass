@@ -12,13 +12,13 @@ import { createHash } from 'crypto';
 import * as fs from 'fs';
 import { Cache } from 'cache-manager';
 import { v4 } from 'uuid';
+import { jwtConstants } from '../auth/auth.config';
 
 @Injectable()
 @Global()
 export class CredentialStoreService {
   static readonly databaseDir = 'data';
   static readonly databasePath = 'data/database';
-  static readonly ttlSeconds = 10 * 60;
 
   constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 
@@ -30,7 +30,7 @@ export class CredentialStoreService {
   private async setCachedKey(key: Buffer) {
     if (key) {
       await this.cacheManager.set('key', key.toString('base64'), {
-        ttl: CredentialStoreService.ttlSeconds,
+        ttl: jwtConstants.sessionTimeoutSeconds,
       });
     } else {
       await this.cacheManager.del('key');
@@ -64,7 +64,7 @@ export class CredentialStoreService {
 
       const userId = v4();
       this.cacheManager.set(userId, true, {
-        ttl: CredentialStoreService.ttlSeconds,
+        ttl: jwtConstants.sessionTimeoutSeconds,
       });
       return userId;
     } catch {

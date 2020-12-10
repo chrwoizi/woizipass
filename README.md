@@ -16,6 +16,7 @@ The development progress is being documented on [Trello](https://trello.com/b/nl
 ## Deploy
 
 - set the environment variable JWT_SECRET to a secret password of arbitrary length.
+- set the environment variable SESSION_TIMEOUT_SECONDS to the maximum number of seconds between password prompts. Default is '600' (ten minutes).
 - deploy on docker (using the [Dockerfile](Dockerfile)).
 
 ## Chrome extension
