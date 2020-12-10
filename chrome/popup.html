@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>woizipass</title>
+    <meta charset="UTF-8" />
+    <style type="text/css">
+      .template {
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      #unauthorized > button {
+        margin-top: 10px;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="js/chrome-extension-async.js"></script>
+    <script src="logger.js"></script>
+    <script src="popup.js"></script>
+    <div id="loading">Loading...</div>
+    <div id="unauthorized" style="display:none">
+      <p>Master password: </p>
+      <input id="password" name="password" type="password"></input>
+      <div id="error" style="color: red"></div>
+      <button id="login" type="submit">LOGIN</button>
+    </div>
+    <div id="credentials" style="display:none">
+      <button id="template" class="template"></button>
+      <span id="none" style="display:none">No&nbsp;credentials&nbsp;found&nbsp;in&nbsp;woizipass</span>
+    </div>
+  </body>
+</html>
