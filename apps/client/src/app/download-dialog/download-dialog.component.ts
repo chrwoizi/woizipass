@@ -23,10 +23,8 @@ export class DownloadDialogComponent {
 
     this.loading = true;
 
-    this.loading = true;
-
     const post$ = this.http.post(
-      '/api/file',
+      '/api/download',
       { password: this.password },
       {
         responseType: 'arraybuffer',

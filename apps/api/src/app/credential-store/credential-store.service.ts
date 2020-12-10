@@ -4,6 +4,7 @@ import {
   Global,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { WoizCredential } from '@woizipass/api-interfaces';
@@ -108,13 +109,7 @@ export class CredentialStoreService {
     }
 
     const encrypted = fs.readFileSync(CredentialStoreService.databasePath);
-    const json = Buffer.from(
-      new ModeOfOperation.ctr(key).decrypt(encrypted)
-    ).toString('utf-8');
-
-    if (!json?.startsWith('[')) {
-      throw new ForbiddenException();
-    }
+    const json = this.decryptFile(key, encrypted);
 
     return JSON.parse(json);
   }
@@ -151,5 +146,43 @@ export class CredentialStoreService {
     }
 
     return fs.readFileSync(CredentialStoreService.databasePath);
+  }
+
+  async putFile(
+    password: string,
+    newPassword: string,
+    file: Buffer
+  ): Promise<void> {
+    if (!password) {
+      throw new ForbiddenException();
+    }
+
+    const key = createHash('sha256').update(password, 'utf8').digest();
+
+    try {
+      await this.load(key);
+    } catch {
+      throw new ForbiddenException();
+    }
+
+    const newKey = createHash('sha256').update(newPassword, 'utf8').digest();
+    const json = this.decryptFile(newKey, file);
+    if (!json) {
+      throw new InternalServerErrorException();
+    }
+
+    fs.writeFileSync(CredentialStoreService.databasePath, file);
+    await this.logout();
+  }
+
+  decryptFile(key: Buffer, encrypted: Buffer) {
+    const json = Buffer.from(
+      new ModeOfOperation.ctr(key).decrypt(encrypted)
+    ).toString('utf-8');
+
+    if (!json?.startsWith('[')) {
+      throw new ForbiddenException();
+    }
+    return json;
   }
 }

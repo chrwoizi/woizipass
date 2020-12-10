@@ -43,6 +43,11 @@ export class AuthTokenPayload {
   userId: string;
 }
 
-export interface BackupRequest {
+export interface DownloadRequest {
   password: string;
+}
+
+export interface UploadRequest {
+  password: string;
+  newPassword: string;
 }
