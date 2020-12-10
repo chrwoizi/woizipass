@@ -15,9 +15,15 @@
     const credentialTemplate = document.getElementById('template');
     const errorDiv = document.getElementById('error');
     const loadingDiv = document.getElementById('loading');
+    const logoutButton = document.getElementById('logout');
 
     loginButton.onclick = async () => {
         await login();
+    }
+
+    logoutButton.onclick = async () => {
+        woizipass.idToken = undefined;
+        location.reload();
     }
 
     passwordInput.onkeyup = async (e) => {

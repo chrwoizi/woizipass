@@ -7,11 +7,21 @@
       .template {
         display: block;
         margin-bottom: 10px;
+        width: 100%;
+        text-align: left;
       }
 
-      #unauthorized > button {
+      #login {
         margin-top: 10px;
         width: 100%;
+      }
+
+      #logout {
+        width: 100%;
+      }
+
+      #none {
+        margin-bottom: 10px;
       }
     </style>
   </head>
@@ -24,11 +34,12 @@
       <p>Master password: </p>
       <input id="password" name="password" type="password"></input>
       <div id="error" style="color: red"></div>
-      <button id="login" type="submit">LOGIN</button>
+      <button id="login">LOGIN</button>
     </div>
     <div id="credentials" style="display:none">
       <button id="template" class="template"></button>
       <span id="none" style="display:none">No&nbsp;credentials&nbsp;found&nbsp;in&nbsp;woizipass</span>
+      <button id="logout">LOGOUT</button>
     </div>
   </body>
 </html>
