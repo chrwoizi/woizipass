@@ -5,6 +5,7 @@ import { ChangeMasterPasswordDialogComponent } from './change-master-password-di
 import { SessionService } from './auth/session.service';
 import { CredentialTableComponent } from './credential-table/credential-table.component';
 import { DownloadDialogComponent } from './download-dialog/download-dialog.component';
+import { UploadDialogComponent } from './upload-dialog/upload-dialog.component';
 
 @Component({
   selector: 'woizipass-root',
@@ -26,6 +27,9 @@ export class AppComponent {
     readonly http: HttpClient
   ) {
     this.unauthorized = !this.sessionService.isLoggedIn();
+    this.sessionService.change$.subscribe(() => {
+      this.unauthorized = !this.sessionService.isLoggedIn();
+    });
   }
 
   onUnauthorizedError() {
@@ -81,6 +85,12 @@ export class AppComponent {
 
   download() {
     this.dialog.open(DownloadDialogComponent, {
+      restoreFocus: false,
+    });
+  }
+
+  upload() {
+    this.dialog.open(UploadDialogComponent, {
       restoreFocus: false,
     });
   }

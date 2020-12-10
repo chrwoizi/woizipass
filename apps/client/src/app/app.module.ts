@@ -25,6 +25,7 @@ import { CredentialTableComponent } from './credential-table/credential-table.co
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatCardModule } from '@angular/material/card';
 import { DownloadDialogComponent } from './download-dialog/download-dialog.component';
+import { UploadDialogComponent } from './upload-dialog/upload-dialog.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { DownloadDialogComponent } from './download-dialog/download-dialog.compo
     DeleteCredentialDialogComponent,
     CredentialTableComponent,
     DownloadDialogComponent,
+    UploadDialogComponent,
   ],
   imports: [
     BrowserModule,

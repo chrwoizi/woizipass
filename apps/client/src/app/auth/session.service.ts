@@ -1,6 +1,6 @@
-import { EventEmitter, Injectable, Output } from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as moment from 'moment';
-import { shareReplay, tap } from 'rxjs/operators';
+import { shareReplay, tap, catchError } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
@@ -46,6 +46,12 @@ export class SessionService {
 
   logout() {
     return this.http.post('/api/logout', {}).pipe(
+      catchError((e) => {
+        localStorage.removeItem('id_token');
+        localStorage.removeItem('expires_at');
+        this._changeSubject.next(false);
+        throw e;
+      }),
       tap(() => {
         localStorage.removeItem('id_token');
         localStorage.removeItem('expires_at');

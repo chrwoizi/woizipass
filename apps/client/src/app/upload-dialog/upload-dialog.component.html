@@ -3,6 +3,14 @@
 </div>
 
 <div *ngIf="!loading && !error">
+  <p style="color: red; font-weight: bold">
+    WARNING: All credentials will be overwritten with the credentials of this
+    file.
+  </p>
+  <p style="color: red; font-weight: bold">
+    WARNING: After the upload, you must use the master password of the uploaded
+    file to log in.
+  </p>
   <form (submit)="submit()" action="#">
     <mat-form-field class="fill">
       <input
@@ -10,10 +18,21 @@
         type="password"
         matInput
         [(ngModel)]="password"
-        placeholder="master password"
+        placeholder="current master password"
         #input
       />
     </mat-form-field>
+    <mat-form-field class="fill">
+      <input
+        name="newPassword"
+        type="password"
+        matInput
+        [(ngModel)]="newPassword"
+        placeholder="file master password"
+        #input
+      />
+    </mat-form-field>
+    <input name="file" type="file" (change)="setFile($event)" #input />
     <br />
     <br />
     <button
@@ -22,10 +41,10 @@
       mat-raised-button
       color="primary"
       class="fill"
-      [disabled]="!password"
+      [disabled]="!password || !newPassword || !hasFile"
       (click)="submit()"
     >
-      DOWNLOAD
+      UPLOAD
     </button>
     <br />
     <br />
