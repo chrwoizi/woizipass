@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { DownloadRequest } from '@woizipass/api-interfaces';
+import { SessionService } from '../auth/session.service';
 
 @Component({
   selector: 'woizipass-download-dialog',
@@ -15,7 +17,8 @@ export class DownloadDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<DownloadDialogComponent>,
-    private http: HttpClient
+    private http: HttpClient,
+    private sessionService: SessionService
   ) {}
 
   submit() {
@@ -25,7 +28,9 @@ export class DownloadDialogComponent {
 
     const post$ = this.http.post(
       '/api/download',
-      { password: this.password },
+      {
+        key: this.sessionService.createApiKey(this.password),
+      } as DownloadRequest,
       {
         responseType: 'arraybuffer',
       }

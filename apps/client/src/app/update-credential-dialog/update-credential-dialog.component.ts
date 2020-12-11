@@ -2,8 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { WoizCredential } from '@woizipass/api-interfaces';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { SessionService } from '../auth/session.service';
 
 @Component({
   selector: 'woizipass-update-credential-dialog',
@@ -35,7 +37,8 @@ export class UpdateCredentialDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<UpdateCredentialDialogComponent>,
-    private http: HttpClient
+    private http: HttpClient,
+    private sessionService: SessionService
   ) {}
 
   ngOnInit() {
@@ -89,9 +92,9 @@ export class UpdateCredentialDialogComponent {
       provider: this.provider,
       email: this.email,
       username: this.username,
-      password: this.password,
+      password: this.sessionService.encryptWithClientKey(this.password),
       comment: this.comment,
-    });
+    } as WoizCredential);
 
     post$.subscribe(
       () => {

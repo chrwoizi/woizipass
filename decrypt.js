@@ -1,7 +1,6 @@
 const fs = require('fs');
 const yargs = require('yargs');
-const { ModeOfOperation } = require('aes-js');
-const { createHash } = require('crypto');
+const { SHA256, AES, enc } = require('crypto-js');
 const { exit } = require('process');
 
 const argv = yargs
@@ -24,12 +23,23 @@ const argv = yargs
     .alias('help', 'h')
     .argv;
 
-const key = createHash('sha256').update(argv.password, 'utf8').digest();
+const apiKey = SHA256(argv.password + '-api');
+const clientKey = SHA256(argv.password + '-client');
+
 const encrypted = fs.readFileSync(argv.inFile);
-const decrypted = new ModeOfOperation.ctr(key).decrypt(encrypted);
-const json = Buffer.from(decrypted).toString('utf-8');
+
+const json = AES.decrypt(encrypted.toString('utf-8'), apiKey.toString()).toString(enc.Utf8);
+
 if (!json?.startsWith('[')) {
     console.log("Incorrect password.");
     exit(-1);
 }
-fs.writeFileSync(argv.outFile, decrypted);
+
+const credentials = JSON.parse(json);
+for (const credential of credentials) {
+    credential.password = AES.decrypt(credential.password, clientKey.toString()).toString(enc.Utf8);
+}
+
+const decrypted = JSON.stringify(credentials);
+
+fs.writeFileSync(argv.outFile, Buffer.from(decrypted, 'utf-8'));
