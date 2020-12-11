@@ -14,6 +14,7 @@ import {
   DownloadRequest,
   ChangeMasterPassword,
   UploadRequest,
+  UploadTextRequest,
 } from '@woizipass/api-interfaces';
 import { Duplex } from 'stream';
 import { AuthAccessGuard } from '../auth/auth-access.guard';
@@ -27,12 +28,10 @@ export class CredentialStoreController {
 
   @UseGuards(AuthAccessGuard)
   @Post('change-master')
-  async changeMasterPassword(
-    @Body() body: ChangeMasterPassword
-  ): Promise<void> {
+  async changeMasterKey(@Body() body: ChangeMasterPassword): Promise<void> {
     await this.credentialStoreService.changeMasterPassword(
-      body.oldPassword,
-      body.newPassword
+      body.oldKey,
+      body.newKey
     );
   }
 
@@ -40,7 +39,7 @@ export class CredentialStoreController {
   @HttpCode(HttpStatus.OK)
   @Post('download')
   async getFile(@Res() res, @Body() body: DownloadRequest) {
-    const buffer = await this.credentialStoreService.getFile(body.password);
+    const buffer = await this.credentialStoreService.getFile(body.key);
 
     res.setHeader(
       'Content-Disposition',
@@ -58,9 +57,26 @@ export class CredentialStoreController {
   @Post('upload')
   async putFile(@Body() body: UploadRequest, @UploadedFile() file) {
     await this.credentialStoreService.putFile(
-      body.password,
-      body.newPassword,
+      body.key,
+      body.newKey,
       file.buffer
+    );
+  }
+
+  @UseGuards(AuthAccessGuard)
+  @Post('download-text')
+  async getFileText(@Body() body: DownloadRequest): Promise<string> {
+    const buffer = await this.credentialStoreService.getFile(body.key);
+    return buffer.toString('utf-8');
+  }
+
+  @UseGuards(AuthAccessGuard)
+  @Post('upload-text')
+  async putFileText(@Body() body: UploadTextRequest) {
+    await this.credentialStoreService.putFile(
+      body.key,
+      body.newKey,
+      Buffer.from(body.text, 'utf-8')
     );
   }
 }

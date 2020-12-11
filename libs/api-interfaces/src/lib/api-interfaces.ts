@@ -17,12 +17,12 @@ export interface GetPasswordResponse {
 }
 
 export interface SetMasterPassword {
-  password: string;
+  key: string;
 }
 
 export interface ChangeMasterPassword {
-  oldPassword: string;
-  newPassword: string;
+  oldKey: string;
+  newKey: string;
 }
 
 export class AuthRequest {
@@ -44,10 +44,16 @@ export class AuthTokenPayload {
 }
 
 export interface DownloadRequest {
-  password: string;
+  key: string;
 }
 
 export interface UploadRequest {
-  password: string;
-  newPassword: string;
+  key: string;
+  newKey: string;
+}
+
+export interface UploadTextRequest {
+  key: string;
+  newKey: string;
+  text: string;
 }

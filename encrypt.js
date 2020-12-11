@@ -1,7 +1,6 @@
 const fs = require('fs');
 const yargs = require('yargs');
-const { ModeOfOperation } = require('aes-js');
-const { createHash } = require('crypto');
+const { SHA256, AES } = require('crypto-js');
 
 const argv = yargs
     .option('inFile', {
@@ -23,7 +22,15 @@ const argv = yargs
     .alias('help', 'h')
     .argv;
 
-const key = createHash('sha256').update(argv.password, 'utf8').digest();
-const plaintext = fs.readFileSync(argv.inFile);
-const encrypted = Buffer.from(new ModeOfOperation.ctr(key).encrypt(plaintext));
-fs.writeFileSync(argv.outFile, encrypted);
+const apiKey = SHA256(argv.password + '-api');
+const clientKey = SHA256(argv.password + '-client');
+
+const plaintextBuffer = fs.readFileSync(argv.inFile);
+
+const credentials = JSON.parse(plaintextBuffer.toString('utf-8'));
+for (const credential of credentials) {
+    credential.password = AES.encrypt(credential.password, clientKey.toString()).toString();
+}
+
+const encrypted = AES.encrypt(JSON.stringify(credentials), apiKey.toString()).toString();
+fs.writeFileSync(argv.outFile, Buffer.from(encrypted, 'utf-8'));

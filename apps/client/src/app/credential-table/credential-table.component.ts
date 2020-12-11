@@ -8,6 +8,7 @@ import {
   WoizCredentials,
 } from '@woizipass/api-interfaces';
 import { Observable } from 'rxjs';
+import { SessionService } from '../auth/session.service';
 import { DeleteCredentialDialogComponent } from '../delete-credential-dialog/delete-credential-dialog.component';
 import { UpdateCredentialDialogComponent } from '../update-credential-dialog/update-credential-dialog.component';
 
@@ -28,7 +29,11 @@ export class CredentialTableComponent {
 
   @Output() onUnauthorizedError = new EventEmitter<void>();
 
-  constructor(private http: HttpClient, public dialog: MatDialog) {
+  constructor(
+    private http: HttpClient,
+    public dialog: MatDialog,
+    private sessionService: SessionService
+  ) {
     this.reload();
   }
 
@@ -136,9 +141,11 @@ export class CredentialTableComponent {
     response$.subscribe(
       (response) => {
         credential.loading = false;
-        credential.password = response.password;
+        credential.password = this.sessionService.decryptWithClientKey(
+          response.password
+        );
       },
-      (e) => {
+      () => {
         credential.loading = false;
       }
     );
@@ -162,7 +169,9 @@ export class CredentialTableComponent {
     response$.subscribe(
       (response) => {
         credential.loading = false;
-        this.copyText(response.password);
+        this.copyText(
+          this.sessionService.decryptWithClientKey(response.password)
+        );
       },
       (e) => {
         credential.loading = false;

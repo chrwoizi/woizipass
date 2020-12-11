@@ -8,12 +8,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { WoizCredential } from '@woizipass/api-interfaces';
-import { ModeOfOperation } from 'aes-js';
-import { createHash } from 'crypto';
 import * as fs from 'fs';
 import { Cache } from 'cache-manager';
 import { v4 } from 'uuid';
 import { jwtConstants } from '../auth/auth.config';
+import { AES, enc } from 'crypto-js';
 
 @Injectable()
 @Global()
@@ -24,13 +23,12 @@ export class CredentialStoreService {
   constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 
   private async getCachedKey() {
-    const key = await this.cacheManager.get('key');
-    return key && Buffer.from(key, 'base64');
+    return await this.cacheManager.get('key');
   }
 
-  private async setCachedKey(key: Buffer) {
+  private async setCachedKey(key: string) {
     if (key) {
-      await this.cacheManager.set('key', key.toString('base64'), {
+      await this.cacheManager.set('key', key, {
         ttl: jwtConstants.sessionTimeoutSeconds,
       });
     } else {
@@ -48,12 +46,10 @@ export class CredentialStoreService {
     return true;
   }
 
-  async login(password: string): Promise<string> {
-    if (!password) {
+  async login(newKey: string): Promise<string> {
+    if (!newKey) {
       throw new ForbiddenException();
     }
-
-    const newKey = createHash('sha256').update(password, 'utf8').digest();
 
     try {
       const credentials = await this.load(newKey);
@@ -77,17 +73,14 @@ export class CredentialStoreService {
     this.cacheManager.reset();
   }
 
-  async changeMasterPassword(oldPassword: string, newPassword: string) {
-    if (!oldPassword) {
+  async changeMasterPassword(oldKey: string, newKey: string) {
+    if (!oldKey) {
       throw new ForbiddenException();
     }
 
-    if (!newPassword) {
+    if (!newKey) {
       throw new ForbiddenException();
     }
-
-    const oldKey = createHash('sha256').update(oldPassword, 'utf8').digest();
-    const newKey = createHash('sha256').update(newPassword, 'utf8').digest();
 
     try {
       const data = await this.load(oldKey);
@@ -98,8 +91,8 @@ export class CredentialStoreService {
     }
   }
 
-  async load(keyArg?: Buffer): Promise<WoizCredential[]> {
-    const key = keyArg || (await this.getCachedKey());
+  async load(keyOverride?: string): Promise<WoizCredential[]> {
+    const key = keyOverride || (await this.getCachedKey());
     if (!key) {
       throw new ForbiddenException();
     }
@@ -114,26 +107,26 @@ export class CredentialStoreService {
     return JSON.parse(json);
   }
 
-  async save(credentials: WoizCredential[], keyArg?: Buffer) {
-    const key = keyArg || (await this.getCachedKey());
+  async save(credentials: WoizCredential[], keyOverride?: string) {
+    const key = keyOverride || (await this.getCachedKey());
     if (!key) {
       throw new ForbiddenException();
     }
 
-    const buffer = Buffer.from(JSON.stringify(credentials), 'utf-8');
-    const encrypted = Buffer.from(new ModeOfOperation.ctr(key).encrypt(buffer));
+    const encrypted = Buffer.from(
+      AES.encrypt(JSON.stringify(credentials), key).toString(),
+      'utf-8'
+    );
     if (!fs.existsSync(CredentialStoreService.databaseDir)) {
       fs.mkdirSync(CredentialStoreService.databaseDir);
     }
     fs.writeFileSync(CredentialStoreService.databasePath, encrypted);
   }
 
-  async getFile(password: string): Promise<Buffer> {
-    if (!password) {
+  async getFile(key: string): Promise<Buffer> {
+    if (!key) {
       throw new ForbiddenException();
     }
-
-    const key = createHash('sha256').update(password, 'utf8').digest();
 
     try {
       await this.load(key);
@@ -148,16 +141,14 @@ export class CredentialStoreService {
     return fs.readFileSync(CredentialStoreService.databasePath);
   }
 
-  async putFile(
-    password: string,
-    newPassword: string,
-    file: Buffer
-  ): Promise<void> {
-    if (!password) {
+  async putFile(key: string, newKey: string, file: Buffer): Promise<void> {
+    if (!key) {
       throw new ForbiddenException();
     }
 
-    const key = createHash('sha256').update(password, 'utf8').digest();
+    if (!newKey) {
+      throw new ForbiddenException();
+    }
 
     try {
       await this.load(key);
@@ -165,7 +156,6 @@ export class CredentialStoreService {
       throw new ForbiddenException();
     }
 
-    const newKey = createHash('sha256').update(newPassword, 'utf8').digest();
     const json = this.decryptFile(newKey, file);
     if (!json) {
       throw new InternalServerErrorException();
@@ -175,10 +165,10 @@ export class CredentialStoreService {
     await this.logout();
   }
 
-  decryptFile(key: Buffer, encrypted: Buffer) {
-    const json = Buffer.from(
-      new ModeOfOperation.ctr(key).decrypt(encrypted)
-    ).toString('utf-8');
+  decryptFile(key: string, encrypted: Buffer) {
+    const json = AES.decrypt(encrypted.toString('utf-8'), key).toString(
+      enc.Utf8
+    );
 
     if (!json?.startsWith('[')) {
       throw new ForbiddenException();

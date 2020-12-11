@@ -12,8 +12,6 @@ export class PasswordGeneratorComponent {
 
   @Output() generated = new EventEmitter<string>();
 
-  constructor() {}
-
   generate(length: number) {
     this.generated.emit(
       generateRandomPassword(

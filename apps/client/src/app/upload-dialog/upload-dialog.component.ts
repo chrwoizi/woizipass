@@ -38,8 +38,14 @@ export class UploadDialogComponent {
   submit() {
     if (!this.password || !this.newPassword || !this.hasFile) return;
 
-    this.formData.append('password', this.password);
-    this.formData.append('newPassword', this.newPassword);
+    this.formData.append(
+      'key',
+      this.sessionService.createApiKey(this.password)
+    );
+    this.formData.append(
+      'newKey',
+      this.sessionService.createApiKey(this.newPassword)
+    );
 
     this.loading = true;
 
