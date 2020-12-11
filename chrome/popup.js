@@ -23,6 +23,7 @@
 
     logoutButton.onclick = async () => {
         woizipass.idToken = undefined;
+        woizipass.clientKey = undefined;
         location.reload();
     }
 
@@ -120,9 +121,11 @@
         const settings = await woizipass.loadSettings();
         const credentialResponse = await woizipass.http("GET", settings.url + "/api/credential/" + credentialId, { authorization: 'Bearer ' + woizipass.idToken })
 
+        const password = CryptoJS.AES.decrypt(credentialResponse.password, woizipass.clientKey).toString(CryptoJS.enc.Utf8);
+
         const message = {
             username: username,
-            password: credentialResponse.password,
+            password: password,
             method: '' /* click or submit */,
             tabId: tabId,
             logLevel: logger.level
