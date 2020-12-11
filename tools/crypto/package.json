@@ -1,0 +1,23 @@
+{
+  "name": "woizipass-crypto",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "decrypt": "ts-node decrypt.ts",
+    "encrypt": "ts-node encrypt.ts"
+  },
+  "private": true,
+  "dependencies": {
+    "argon2": "^0.27.0",
+    "crypto-js": "^4.0.0",
+    "tslib": "^2.0.0",
+    "yargs": "^16.2.0"
+  },
+  "devDependencies": {
+    "@types/argon2-browser": "^1.12.0",
+    "@types/crypto-js": "^4.0.1",
+    "@types/node": "^8.9.5",
+    "ts-node": "~7.0.0",
+    "typescript": "~4.0.3"
+  }
+}

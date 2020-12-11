@@ -40,8 +40,8 @@ woizipass.loadSettings = async function () {
 }
 
 woizipass.login = async function (password) {
-    woizipass.clientKey = CryptoJS.SHA256(password + '-client').toString();
-    apiKey = CryptoJS.SHA256(password + '-api').toString();
+    woizipass.clientKey = await createClientKey(password);
+    apiKey = await createApiKey(password);
     const settings = await woizipass.loadSettings();
     const loginResponse = await woizipass.http("POST", settings.url + "/api/login", {}, { username: "woizipass", password: apiKey })
     if (!loginResponse) {
@@ -52,6 +52,10 @@ woizipass.login = async function (password) {
 
 woizipass.loadCredentials = async function (tab) {
     try {
+        if (!woizipass.idToken) {
+            throw new Error('unauthorized');
+        }
+
         const settings = await woizipass.loadSettings();
         const credentialsResponse = await woizipass.http("GET", settings.url + "/api/credential", { authorization: 'Bearer ' + woizipass.idToken })
 

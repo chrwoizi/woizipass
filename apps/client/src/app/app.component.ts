@@ -52,10 +52,11 @@ export class AppComponent {
     this.credentialTable.create();
   }
 
-  login() {
+  async login() {
     this.loading = true;
 
-    this.sessionService.login(this.masterPassword).subscribe(
+    const login$ = await this.sessionService.login(this.masterPassword);
+    login$.subscribe(
       () => {
         this.loading = false;
         this.masterPassword = undefined;

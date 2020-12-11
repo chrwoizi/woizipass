@@ -8,11 +8,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { WoizCredential } from '@woizipass/api-interfaces';
+import { decrypt, encrypt } from '@woizipass/crypto-api';
 import * as fs from 'fs';
 import { Cache } from 'cache-manager';
 import { v4 } from 'uuid';
 import { jwtConstants } from '../auth/auth.config';
-import { AES, enc } from 'crypto-js';
 
 @Injectable()
 @Global()
@@ -114,7 +114,7 @@ export class CredentialStoreService {
     }
 
     const encrypted = Buffer.from(
-      AES.encrypt(JSON.stringify(credentials), key).toString(),
+      encrypt(JSON.stringify(credentials), key),
       'utf-8'
     );
     if (!fs.existsSync(CredentialStoreService.databaseDir)) {
@@ -166,9 +166,7 @@ export class CredentialStoreService {
   }
 
   decryptFile(key: string, encrypted: Buffer) {
-    const json = AES.decrypt(encrypted.toString('utf-8'), key).toString(
-      enc.Utf8
-    );
+    const json = decrypt(encrypted.toString('utf-8'), key);
 
     if (!json?.startsWith('[')) {
       throw new ForbiddenException();

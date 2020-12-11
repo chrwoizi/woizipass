@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { createApiKey } from '@woizipass/crypto-client';
 import { SessionService } from '../auth/session.service';
 
 @Component({
@@ -35,17 +36,11 @@ export class UploadDialogComponent {
     this.hasFile = true;
   }
 
-  submit() {
+  async submit() {
     if (!this.password || !this.newPassword || !this.hasFile) return;
 
-    this.formData.append(
-      'key',
-      this.sessionService.createApiKey(this.password)
-    );
-    this.formData.append(
-      'newKey',
-      this.sessionService.createApiKey(this.newPassword)
-    );
+    this.formData.append('key', await createApiKey(this.password));
+    this.formData.append('newKey', await createApiKey(this.newPassword));
 
     this.loading = true;
 

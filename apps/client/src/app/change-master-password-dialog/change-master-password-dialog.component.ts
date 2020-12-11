@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import {
-  ChangeMasterPassword,
-  DownloadRequest,
-  UploadTextRequest,
-} from '@woizipass/api-interfaces';
+import { DownloadRequest, UploadTextRequest } from '@woizipass/api-interfaces';
 import { SessionService } from '../auth/session.service';
-import { SHA256, AES, enc } from 'crypto-js';
+import {
+  createApiKey,
+  createClientKey,
+  decrypt,
+  encrypt,
+} from '@woizipass/crypto-client';
 
 @Component({
   selector: 'woizipass-change-master-password-dialog',
@@ -27,16 +28,16 @@ export class ChangeMasterPasswordDialogComponent {
     private sessionService: SessionService
   ) {}
 
-  submit() {
+  async submit() {
     if (!this.oldPassword || !this.newPassword) return;
 
     this.loading = true;
 
-    const oldApiKey = this.sessionService.createApiKey(this.oldPassword);
-    const oldClientKey = this.sessionService.createClientKey(this.oldPassword);
+    const oldApiKey = await createApiKey(this.oldPassword);
+    const oldClientKey = await createClientKey(this.oldPassword);
 
-    const newApiKey = this.sessionService.createApiKey(this.newPassword);
-    const newClientKey = this.sessionService.createClientKey(this.newPassword);
+    const newApiKey = await createApiKey(this.newPassword);
+    const newClientKey = await createClientKey(this.newPassword);
 
     const post$ = this.http.post(
       '/api/download-text',
@@ -47,8 +48,8 @@ export class ChangeMasterPasswordDialogComponent {
     );
 
     post$.subscribe(
-      (oldEncrypted) => {
-        const json = AES.decrypt(oldEncrypted, oldApiKey).toString(enc.Utf8);
+      async (oldEncrypted) => {
+        const json = decrypt(oldEncrypted, oldApiKey);
 
         if (!json?.startsWith('[')) {
           this.loading = false;
@@ -59,25 +60,16 @@ export class ChangeMasterPasswordDialogComponent {
         const credentials = JSON.parse(json);
 
         for (const credential of credentials) {
-          credential.password = AES.decrypt(
-            credential.password,
-            oldClientKey
-          ).toString(enc.Utf8);
+          credential.password = decrypt(credential.password, oldClientKey);
 
-          credential.password = AES.encrypt(
-            credential.password,
-            newClientKey
-          ).toString();
+          credential.password = encrypt(credential.password, newClientKey);
         }
 
-        const newEncrypted = AES.encrypt(
-          JSON.stringify(credentials),
-          newApiKey
-        ).toString();
+        const newEncrypted = encrypt(JSON.stringify(credentials), newApiKey);
 
         const post$ = this.http.post('/api/upload-text', {
-          key: this.sessionService.createApiKey(this.oldPassword),
-          newKey: this.sessionService.createApiKey(this.newPassword),
+          key: await createApiKey(this.oldPassword),
+          newKey: await createApiKey(this.newPassword),
           text: newEncrypted,
         } as UploadTextRequest);
 
