@@ -40,8 +40,10 @@ woizipass.loadSettings = async function () {
 }
 
 woizipass.login = async function (password) {
+    woizipass.clientKey = CryptoJS.SHA256(password + '-client').toString();
+    apiKey = CryptoJS.SHA256(password + '-api').toString();
     const settings = await woizipass.loadSettings();
-    const loginResponse = await woizipass.http("POST", settings.url + "/api/login", {}, { username: "woizipass", password: password })
+    const loginResponse = await woizipass.http("POST", settings.url + "/api/login", {}, { username: "woizipass", password: apiKey })
     if (!loginResponse) {
         throw new Error('invalid response');
     }
