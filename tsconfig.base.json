@@ -16,7 +16,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@woizipass/api-interfaces": ["libs/api-interfaces/src/index.ts"]
+      "@woizipass/api-interfaces": ["libs/api-interfaces/src/index.ts"],
+      "@woizipass/crypto-api": ["libs/crypto/src/index-api.ts"],
+      "@woizipass/crypto-client": ["libs/crypto/src/index-client.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

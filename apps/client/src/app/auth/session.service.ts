@@ -3,8 +3,13 @@ import * as moment from 'moment';
 import { shareReplay, tap, catchError } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { SHA256, AES, enc } from 'crypto-js';
 import { AuthRequest } from '@woizipass/api-interfaces';
+import {
+  createApiKey,
+  createClientKey,
+  decrypt,
+  encrypt,
+} from '@woizipass/crypto-client';
 
 @Injectable({
   providedIn: 'root',
@@ -15,10 +20,10 @@ export class SessionService {
 
   constructor(private http: HttpClient) {}
 
-  login(password: string) {
-    this.setClientKey(this.createClientKey(password));
+  async login(password: string) {
+    this.setClientKey(await createClientKey(password));
 
-    const apiKey = this.createApiKey(password);
+    const apiKey = await createApiKey(password);
 
     return this.http
       .post('/api/login', {
@@ -82,14 +87,6 @@ export class SessionService {
     return moment.unix(expiresAt);
   }
 
-  createApiKey(password: string) {
-    return SHA256(password + '-api').toString();
-  }
-
-  createClientKey(password: string) {
-    return SHA256(password + '-client').toString();
-  }
-
   private setClientKey(clientKey: string) {
     localStorage.setItem('client_key', clientKey);
   }
@@ -98,21 +95,21 @@ export class SessionService {
     return localStorage.getItem('client_key');
   }
 
-  encryptWithClientKey(value: string): string {
+  encryptWithClientKey(cleartext: string): string {
     const clientKey = this.getClientKey();
     if (!clientKey) {
       throw new Error('Password not set');
     }
 
-    return AES.encrypt(value, clientKey).toString();
+    return encrypt(cleartext, clientKey);
   }
 
-  decryptWithClientKey(encrypted: string): string {
+  decryptWithClientKey(cipher: string): string {
     const clientKey = this.getClientKey();
     if (!clientKey) {
       throw new Error('Password not set');
     }
 
-    return AES.decrypt(encrypted, clientKey).toString(enc.Utf8);
+    return decrypt(cipher, clientKey);
   }
 }

@@ -28,8 +28,8 @@
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "decrypt": "node decrypt.js",
-    "encrypt": "node encrypt.js"
+    "decrypt": "cd tools/crypto && npx ts-node decrypt.ts",
+    "encrypt": "cd tools/crypto && npx ts-node encrypt.ts"
   },
   "private": true,
   "dependencies": {
@@ -50,6 +50,8 @@
     "@nestjs/platform-express": "^7.0.0",
     "@nestjs/serve-static": "^2.1.4",
     "@nrwl/angular": "10.4.4",
+    "argon2": "^0.27.0",
+    "argon2-browser": "^1.15.2",
     "cache-manager": "^3.4.0",
     "crypto-js": "^4.0.0",
     "passport": "^0.4.1",
@@ -76,6 +78,7 @@
     "@nrwl/node": "10.4.4",
     "@nrwl/tao": "10.4.4",
     "@nrwl/workspace": "10.4.4",
+    "@types/argon2-browser": "^1.12.0",
     "@types/cache-manager": "^2.10.3",
     "@types/crypto-js": "^4.0.1",
     "@types/jest": "26.0.8",

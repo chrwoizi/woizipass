@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DownloadRequest } from '@woizipass/api-interfaces';
+import { createApiKey } from '@woizipass/crypto-client';
 import { SessionService } from '../auth/session.service';
 
 @Component({
@@ -21,7 +22,7 @@ export class DownloadDialogComponent {
     private sessionService: SessionService
   ) {}
 
-  submit() {
+  async submit() {
     if (!this.password) return;
 
     this.loading = true;
@@ -29,7 +30,7 @@ export class DownloadDialogComponent {
     const post$ = this.http.post(
       '/api/download',
       {
-        key: this.sessionService.createApiKey(this.password),
+        key: await createApiKey(this.password),
       } as DownloadRequest,
       {
         responseType: 'arraybuffer',
