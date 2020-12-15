@@ -58,20 +58,21 @@ export class SessionService {
     this._changeSubject.next(this.isLoggedIn());
   }
 
+  onUnauthorized() {
+    localStorage.removeItem('client_key');
+    localStorage.removeItem('id_token');
+    localStorage.removeItem('expires_at');
+    this._changeSubject.next(false);
+  }
+
   logout() {
     return this.http.post('/api/logout', {}).pipe(
       catchError((e) => {
-        localStorage.removeItem('client_key');
-        localStorage.removeItem('id_token');
-        localStorage.removeItem('expires_at');
-        this._changeSubject.next(false);
+        this.onUnauthorized();
         throw e;
       }),
       tap(() => {
-        localStorage.removeItem('client_key');
-        localStorage.removeItem('id_token');
-        localStorage.removeItem('expires_at');
-        this._changeSubject.next(false);
+        this.onUnauthorized();
       }),
       shareReplay()
     );

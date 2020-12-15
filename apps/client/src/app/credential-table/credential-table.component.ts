@@ -27,8 +27,6 @@ export class CredentialTableComponent {
   loading = false;
   error: string;
 
-  @Output() onUnauthorizedError = new EventEmitter<void>();
-
   constructor(
     private http: HttpClient,
     public dialog: MatDialog,
@@ -50,7 +48,7 @@ export class CredentialTableComponent {
       (e) => {
         this.loading = false;
         if (e.status === 403) {
-          this.onUnauthorizedError.emit();
+          this.sessionService.onUnauthorized();
         } else {
           this.error = e.message || e;
         }
@@ -145,8 +143,13 @@ export class CredentialTableComponent {
           response.password
         );
       },
-      () => {
+      (e) => {
         credential.loading = false;
+        if (e.status === 403) {
+          this.sessionService.onUnauthorized();
+        } else {
+          this.error = e.message || e;
+        }
       }
     );
   }
@@ -175,6 +178,11 @@ export class CredentialTableComponent {
       },
       (e) => {
         credential.loading = false;
+        if (e.status === 403) {
+          this.sessionService.onUnauthorized();
+        } else {
+          this.error = e.message || e;
+        }
       }
     );
   }

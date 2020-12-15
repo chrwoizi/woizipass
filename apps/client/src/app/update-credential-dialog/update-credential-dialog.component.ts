@@ -102,7 +102,11 @@ export class UpdateCredentialDialogComponent {
       },
       (e) => {
         this.loading = false;
-        this.error = e.message || e;
+        if (e.status === 403) {
+          this.sessionService.onUnauthorized();
+        } else {
+          this.error = e.message || e;
+        }
       }
     );
   }

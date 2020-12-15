@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { SessionService } from '../auth/session.service';
 
 @Component({
   selector: 'woizipass-delete-credential-dialog',
@@ -19,7 +20,8 @@ export class DeleteCredentialDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<DeleteCredentialDialogComponent>,
-    private http: HttpClient
+    private http: HttpClient,
+    private sessionService: SessionService
   ) {}
 
   submit() {
@@ -33,7 +35,11 @@ export class DeleteCredentialDialogComponent {
       },
       (e) => {
         this.loading = false;
-        this.error = e.message || e;
+        if (e.status === 403) {
+          this.sessionService.onUnauthorized();
+        } else {
+          this.error = e.message || e;
+        }
       }
     );
   }

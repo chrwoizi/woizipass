@@ -32,10 +32,6 @@ export class AppComponent {
     });
   }
 
-  onUnauthorizedError() {
-    this.unauthorized = true;
-  }
-
   openChangeMasterPasswordDialog() {
     this.dialog.open(ChangeMasterPasswordDialogComponent, {
       restoreFocus: false,
