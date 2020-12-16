@@ -12,7 +12,6 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   DownloadRequest,
-  ChangeMasterPassword,
   UploadRequest,
   UploadTextRequest,
 } from '@woizipass/api-interfaces';
@@ -25,15 +24,6 @@ export class CredentialStoreController {
   constructor(
     private readonly credentialStoreService: CredentialStoreService
   ) {}
-
-  @UseGuards(AuthAccessGuard)
-  @Post('change-master')
-  async changeMasterKey(@Body() body: ChangeMasterPassword): Promise<void> {
-    await this.credentialStoreService.changeMasterPassword(
-      body.oldKey,
-      body.newKey
-    );
-  }
 
   @UseGuards(AuthAccessGuard)
   @HttpCode(HttpStatus.OK)
