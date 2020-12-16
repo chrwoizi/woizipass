@@ -93,9 +93,10 @@ export class UpdateCredentialDialogComponent {
       provider: this.provider,
       email: this.email,
       username: this.username,
-      password: this.changePassword
-        ? this.sessionService.encryptWithClientKey(this.password)
-        : undefined,
+      password:
+        this.changePassword || !this.id
+          ? this.sessionService.encryptWithClientKey(this.password)
+          : undefined,
       comment: this.comment,
     } as WoizCredential);
 
