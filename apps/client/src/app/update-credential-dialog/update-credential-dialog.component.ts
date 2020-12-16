@@ -18,6 +18,7 @@ export class UpdateCredentialDialogComponent {
   email: string;
   username: string;
   password: string;
+  changePassword = false;
   comment: string;
 
   loading = false;
@@ -92,7 +93,9 @@ export class UpdateCredentialDialogComponent {
       provider: this.provider,
       email: this.email,
       username: this.username,
-      password: this.sessionService.encryptWithClientKey(this.password),
+      password: this.changePassword
+        ? this.sessionService.encryptWithClientKey(this.password)
+        : undefined,
       comment: this.comment,
     } as WoizCredential);
 
@@ -104,6 +107,7 @@ export class UpdateCredentialDialogComponent {
         this.loading = false;
         if (e.status === 403) {
           this.sessionService.onUnauthorized();
+          this.dialogRef.close();
         } else {
           this.error = e.message || e;
         }
