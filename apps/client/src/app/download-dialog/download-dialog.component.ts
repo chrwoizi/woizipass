@@ -51,6 +51,7 @@ export class DownloadDialogComponent {
         this.loading = false;
         if (e.status === 403) {
           this.sessionService.onUnauthorized();
+          this.dialogRef.close();
         } else {
           this.error = e.message || e;
         }
