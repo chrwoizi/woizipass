@@ -5,16 +5,10 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "command": "npm run nx -- serve api",
-      "name": "api",
-      "request": "launch",
-      "type": "node-terminal"
-    },
-    {
-      "command": "npm run nx -- serve client",
-      "name": "client",
-      "request": "launch",
-      "type": "node-terminal"
+      "name": "attach api",
+      "type": "node",
+      "request": "attach",
+      "port": 7771
     },
     {
       "type": "chrome",
@@ -29,11 +23,7 @@
       "name": "dev",
       "configurations": [
         {
-          "name": "api",
-          "folder": "woizipass"
-        },
-        {
-          "name": "client",
+          "name": "attach api",
           "folder": "woizipass"
         },
         {
