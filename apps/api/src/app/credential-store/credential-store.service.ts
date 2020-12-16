@@ -73,24 +73,6 @@ export class CredentialStoreService {
     this.cacheManager.reset();
   }
 
-  async changeMasterPassword(oldKey: string, newKey: string) {
-    if (!oldKey) {
-      throw new ForbiddenException();
-    }
-
-    if (!newKey) {
-      throw new ForbiddenException();
-    }
-
-    try {
-      const data = await this.load(oldKey);
-      await this.save(data, newKey);
-      await this.setCachedKey(newKey);
-    } catch {
-      throw new ForbiddenException();
-    }
-  }
-
   async load(keyOverride?: string): Promise<WoizCredential[]> {
     const key = keyOverride || (await this.getCachedKey());
     if (!key) {
