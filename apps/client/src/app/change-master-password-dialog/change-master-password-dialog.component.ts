@@ -18,6 +18,7 @@ import {
 export class ChangeMasterPasswordDialogComponent {
   oldPassword: string;
   newPassword: string;
+  newPasswordConfirm: string;
 
   loading = false;
   error?: string;
@@ -29,7 +30,12 @@ export class ChangeMasterPasswordDialogComponent {
   ) {}
 
   async submit() {
-    if (!this.oldPassword || !this.newPassword) return;
+    if (
+      !this.oldPassword ||
+      !this.newPassword ||
+      this.newPassword !== this.newPasswordConfirm
+    )
+      return;
 
     this.loading = true;
 
@@ -68,8 +74,8 @@ export class ChangeMasterPasswordDialogComponent {
         const newEncrypted = encrypt(JSON.stringify(credentials), newApiKey);
 
         const post$ = this.http.post('/api/upload-text', {
-          key: await createApiKey(this.oldPassword),
-          newKey: await createApiKey(this.newPassword),
+          key: oldApiKey,
+          newKey: newApiKey,
           text: newEncrypted,
         } as UploadTextRequest);
 
@@ -82,6 +88,7 @@ export class ChangeMasterPasswordDialogComponent {
             this.loading = false;
             if (e.status === 403) {
               this.sessionService.onUnauthorized();
+              this.dialogRef.close();
             } else {
               this.error = e.message || e;
             }
@@ -90,11 +97,7 @@ export class ChangeMasterPasswordDialogComponent {
       },
       (e) => {
         this.loading = false;
-        if (e.status === 403) {
-          this.sessionService.onUnauthorized();
-        } else {
-          this.error = e.message || e;
-        }
+        this.error = e.message || e;
       }
     );
   }
