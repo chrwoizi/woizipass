@@ -23,6 +23,7 @@ import { DeleteCredentialDialogComponent } from './delete-credential-dialog/dele
 import { AuthModule } from './auth/auth.module';
 import { CredentialTableComponent } from './credential-table/credential-table.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatCardModule } from '@angular/material/card';
 import { DownloadDialogComponent } from './download-dialog/download-dialog.component';
 import { UploadDialogComponent } from './upload-dialog/upload-dialog.component';
@@ -58,6 +59,7 @@ import { UploadDialogComponent } from './upload-dialog/upload-dialog.component';
     MatAutocompleteModule,
     ReactiveFormsModule,
     MatCardModule,
+    MatCheckboxModule,
   ],
   exports: [],
   providers: [],
