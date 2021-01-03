@@ -36,7 +36,7 @@ RUN chgrp -R woizipass /apps
 USER woizipass
 WORKDIR /apps
 ENV NODE_ENV=production
-RUN npm audit fix
+RUN npm audit fix; exit 0
 RUN npm ci --production
 
 # cleanup
