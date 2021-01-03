@@ -3,8 +3,9 @@ FROM ubuntu:latest
 RUN apt-get update
 RUN apt-get -y upgrade
 
-#RUN curl -sL https://deb.nodesource.com/setup_current.x | sudo -E bash -
-RUN sudo apt-get install -y nodejs
+RUN apt-get install -y curl
+RUN curl -sL https://deb.nodesource.com/setup_current.x | bash -
+RUN apt-get install -y nodejs
 
 RUN useradd -ms /bin/bash woizipass
 
@@ -30,6 +31,7 @@ RUN chgrp -R woizipass /apps
 USER woizipass
 WORKDIR /apps
 ENV NODE_ENV=production
+RUN npm audit fix
 RUN npm ci --production
 
 # cleanup
