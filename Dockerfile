@@ -1,4 +1,16 @@
-FROM node:14.4.0
+FROM ubuntu:20.04
+
+# invalidate the docker cache to restart deployment from here every time
+ADD https://www.google.com /time.now
+
+RUN apt-get update
+RUN apt-get -y dist-upgrade
+RUN apt-get update
+RUN apt-get -y upgrade
+
+RUN apt-get install -y curl
+RUN curl -sL https://deb.nodesource.com/setup_current.x | bash -
+RUN apt-get install -y nodejs
 
 RUN useradd -ms /bin/bash woizipass
 
@@ -24,6 +36,7 @@ RUN chgrp -R woizipass /apps
 USER woizipass
 WORKDIR /apps
 ENV NODE_ENV=production
+RUN npm audit fix; exit 0
 RUN npm ci --production
 
 # cleanup
