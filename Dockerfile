@@ -1,5 +1,10 @@
-FROM ubuntu:latest
+FROM ubuntu:20.04
 
+# invalidate the docker cache to restart deployment from here every time
+ADD https://www.google.com /time.now
+
+RUN apt-get update
+RUN apt-get -y dist-upgrade
 RUN apt-get update
 RUN apt-get -y upgrade
 
