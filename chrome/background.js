@@ -85,7 +85,10 @@ woizipass.loadCredentials = async function (tab) {
         }
 
         function matchUrl() {
-            return credentialsResponse.credentials.filter(x => x.url && x.url.length > 0 && new RegExp(escapeRegExp(x.url).replace('\\*', '.*')).test(tab.url));
+            function buildUrlRegExp(s) {
+                return new RegExp(escapeRegExp(s).replace('\\*', '.*'));
+            }
+            return credentialsResponse.credentials.filter(x => x.url && x.url.length > 0 && x.url.split(';').find(y => buildUrlRegExp(y).test(tab.url)));
         }
 
         const credentials = matchUrl().slice();
