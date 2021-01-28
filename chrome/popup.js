@@ -15,13 +15,18 @@
     const credentialTemplate = document.getElementById('template');
     const errorDiv = document.getElementById('error');
     const loadingDiv = document.getElementById('loading');
-    const logoutButton = document.getElementById('logout');
+    const logoutLink = document.getElementById('logout');
+    const woizipassLink = document.getElementById('woizipass');
+
+    const settings = await woizipass.loadSettings();
+    woizipassLink.href = settings.url;
 
     loginButton.onclick = async () => {
         await login();
     }
 
-    logoutButton.onclick = async () => {
+    logoutLink.onclick = async (e) => {
+        e.preventDefault();
         woizipass.idToken = undefined;
         woizipass.clientKey = undefined;
         location.reload();
