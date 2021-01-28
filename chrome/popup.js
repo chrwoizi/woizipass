@@ -49,6 +49,7 @@
                 await showCredentials(credentials);
             }
             catch (e) {
+                console.log(e);
                 await setAuthorized(false);
             }
         }
@@ -101,6 +102,7 @@
     async function setAuthorized(authorized) {
         loginDiv.style.display = authorized ? 'none' : 'block';
         if (!authorized) {
+            credentialsDiv.style.display = 'none';
             passwordInput.focus();
         }
     }
@@ -111,10 +113,10 @@
 
         for (const credential of credentials) {
             if (credential.username) {
-                await createCredentialButton(credential.id, credential.username);
+                await createCredentialButton(credential.id, credential.username, credential.comment);
             }
             if (credential.email) {
-                await createCredentialButton(credential.id, credential.email);
+                await createCredentialButton(credential.id, credential.email, credential.comment);
             }
         }
 
@@ -180,12 +182,15 @@
         }
     }
 
-    async function createCredentialButton(credentialId, username) {
-        const item = credentialTemplate.cloneNode();
+    async function createCredentialButton(credentialId, username, comment) {
+        const item = credentialTemplate.cloneNode(true);
 
-        item.innerText = username;
+        const button = item.querySelector('button');
+        const text = item.querySelector('div');
+        button.innerText = username;
+        text.innerText = comment || '';
 
-        item.onclick = async () => await fillCredentialForm(tab.id, credentialId, username);
+        button.onclick = async () => await fillCredentialForm(tab.id, credentialId, username);
 
         credentialTemplate.parentNode.insertBefore(item, credentialTemplate);
     }
