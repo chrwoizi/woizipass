@@ -90,7 +90,12 @@ woizipass.loadCredentials = async function (tab) {
             return credentialsResponse.credentials.filter(x => x.url && x.url.length > 0 && new RegExp(escapeRegExp(x.url).replace('\\*', '.*')).test(tab.url));
         }
 
-        const credentials = matchUrl().concat(matchDomain());
+        const credentials = matchUrl().slice();
+        for (const item of matchDomain()) {
+            if (credentials.indexOf(item) === -1) {
+                credentials.push(item);
+            }
+        }
 
         if (credentials.length > 0) {
             await woizipass.greenIcon(tab.id);
