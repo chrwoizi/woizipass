@@ -27,6 +27,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatCardModule } from '@angular/material/card';
 import { DownloadDialogComponent } from './download-dialog/download-dialog.component';
 import { UploadDialogComponent } from './upload-dialog/upload-dialog.component';
+import { TextToHtmlPipe } from './text-to-html.pipe';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { UploadDialogComponent } from './upload-dialog/upload-dialog.component';
     CredentialTableComponent,
     DownloadDialogComponent,
     UploadDialogComponent,
+    TextToHtmlPipe,
   ],
   imports: [
     BrowserModule,

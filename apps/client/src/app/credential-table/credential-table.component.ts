@@ -12,7 +12,7 @@ import { SessionService } from '../auth/session.service';
 import { DeleteCredentialDialogComponent } from '../delete-credential-dialog/delete-credential-dialog.component';
 import { UpdateCredentialDialogComponent } from '../update-credential-dialog/update-credential-dialog.component';
 
-interface WoizCredentialWithLoading extends WoizCredential {
+interface WoizCredentialViewModel extends WoizCredential {
   loading: boolean;
 }
 
@@ -22,8 +22,8 @@ interface WoizCredentialWithLoading extends WoizCredential {
   styleUrls: ['./credential-table.component.css'],
 })
 export class CredentialTableComponent {
-  dataSource: MatTableDataSource<WoizCredentialWithLoading>;
-  observableData: Observable<WoizCredentialWithLoading[]>;
+  dataSource: MatTableDataSource<WoizCredentialViewModel>;
+  observableData: Observable<WoizCredentialViewModel[]>;
   loading = false;
   error: string;
 
@@ -40,8 +40,8 @@ export class CredentialTableComponent {
     this.http.get<WoizCredentials>('/api/credential').subscribe(
       (response) => {
         this.loading = false;
-        this.dataSource = new MatTableDataSource<WoizCredentialWithLoading>(
-          response.credentials as WoizCredentialWithLoading[]
+        this.dataSource = new MatTableDataSource<WoizCredentialViewModel>(
+          response.credentials as WoizCredentialViewModel[]
         );
         this.observableData = this.dataSource.connect();
       },
@@ -131,7 +131,7 @@ export class CredentialTableComponent {
     });
   }
 
-  show(credential: WoizCredentialWithLoading) {
+  show(credential: WoizCredentialViewModel) {
     credential.loading = true;
     const response$ = this.http.get<GetPasswordResponse>(
       '/api/credential/' + credential.id
@@ -155,11 +155,11 @@ export class CredentialTableComponent {
     );
   }
 
-  hide(credential: WoizCredentialWithLoading) {
+  hide(credential: WoizCredentialViewModel) {
     credential.password = undefined;
   }
 
-  copy(credential: WoizCredentialWithLoading) {
+  copy(credential: WoizCredentialViewModel) {
     if (credential.password) {
       this.copyText(credential.password);
       return;
