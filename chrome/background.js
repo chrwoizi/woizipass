@@ -50,6 +50,10 @@ woizipass.login = async function (password) {
     woizipass.idToken = loginResponse.idToken;
 }
 
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
 woizipass.loadCredentials = async function (tab) {
     try {
         if (!woizipass.idToken) {
@@ -59,23 +63,34 @@ woizipass.loadCredentials = async function (tab) {
         const settings = await woizipass.loadSettings();
         const credentialsResponse = await woizipass.http("GET", settings.url + "/api/credential", { authorization: 'Bearer ' + woizipass.idToken })
 
-        const match = /^https?:\/\/([\w-\.]+)/.exec(tab.url);
-        if (!match) {
-            return [];
+        function matchDomain() {
+
+            const match = /^https?:\/\/([\w-\.]+)/.exec(tab.url);
+            if (!match) {
+                return [];
+            }
+
+            const domain = match[1];
+            const domains = [domain];
+            const split = domain.split('.');
+            while (split.length > 2) {
+                split.shift();
+                domains.push(split.join('.'));
+            }
+            if (split.length === 2) {
+                domains.push(split[0]);
+            }
+
+            const credentials = credentialsResponse.credentials.filter(x => domains.indexOf(x.provider) >= 0);
+
+            return credentials;
         }
 
-        const domain = match[1];
-        const domains = [domain];
-        const split = domain.split('.');
-        while (split.length > 2) {
-            split.shift();
-            domains.push(split.join('.'));
-        }
-        if (split.length === 2) {
-            domains.push(split[0]);
+        function matchUrl() {
+            return credentialsResponse.credentials.filter(x => x.url && x.url.length > 0 && new RegExp(escapeRegExp(x.url).replace('\\*', '.*')).test(tab.url));
         }
 
-        const credentials = credentialsResponse.credentials.filter(x => domains.indexOf(x.provider) >= 0);
+        const credentials = matchUrl().concat(matchDomain());
 
         if (credentials.length > 0) {
             await woizipass.greenIcon(tab.id);
@@ -86,7 +101,7 @@ woizipass.loadCredentials = async function (tab) {
 
         return credentials;
     }
-    catch {
+    catch (e) {
         await woizipass.resetIcon(tab.id);
         throw e;
     }
