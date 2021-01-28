@@ -5,6 +5,7 @@ export interface WoizCredential {
   username?: string;
   password?: string;
   comment?: string;
+  url?: string;
   accessedAt?: Date;
 }
 

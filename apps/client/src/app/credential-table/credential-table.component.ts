@@ -77,6 +77,7 @@ export class CredentialTableComponent {
     dialogRef.componentInstance.email = row.email;
     dialogRef.componentInstance.username = row.username;
     dialogRef.componentInstance.comment = row.comment;
+    dialogRef.componentInstance.url = row.url;
 
     dialogRef.afterClosed().subscribe((success: boolean) => {
       if (success) this.reload();
