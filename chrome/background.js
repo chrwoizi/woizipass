@@ -75,15 +75,13 @@ woizipass.loadCredentials = async function (tab) {
             const split = domain.split('.');
             while (split.length > 2) {
                 split.shift();
-                domains.push(split.join('.'));
+                domains.push(split.join('.').toLowerCase());
             }
             if (split.length === 2) {
-                domains.push(split[0]);
+                domains.push(split[0].toLowerCase());
             }
 
-            const credentials = credentialsResponse.credentials.filter(x => domains.indexOf(x.provider) >= 0);
-
-            return credentials;
+            return credentialsResponse.credentials.filter(x => domains.indexOf(x.provider.toLowerCase()) >= 0);
         }
 
         function matchUrl() {
