@@ -16,11 +16,21 @@
         width: 100%;
       }
 
-      #logout {
+      #none {
+        margin-bottom: 10px;
+      }
+
+      .footer {
         width: 100%;
       }
 
-      #none {
+      #woizipass {
+        float: right;
+        margin-bottom: 10px;
+      }
+
+      #logout {
+        float: left;
         margin-bottom: 10px;
       }
     </style>
@@ -41,7 +51,10 @@
     <div id="credentials" style="display:none">
       <button id="template" class="template"></button>
       <span id="none" style="display:none">No&nbsp;credentials&nbsp;found&nbsp;in&nbsp;woizipass</span>
-      <button id="logout">LOGOUT</button>
+      <div class="footer">
+        <a id="logout" href="">logout</a>
+        <a id="woizipass" target="__blank">woizipass</a>
+      </div>
     </div>
   </body>
 </html>
