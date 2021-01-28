@@ -20,6 +20,7 @@ export class UpdateCredentialDialogComponent {
   password: string;
   changePassword = false;
   comment: string;
+  url: string;
 
   loading = false;
   error?: string;
@@ -98,6 +99,7 @@ export class UpdateCredentialDialogComponent {
           ? this.sessionService.encryptWithClientKey(this.password)
           : undefined,
       comment: this.comment,
+      url: this.url,
     } as WoizCredential);
 
     post$.subscribe(
