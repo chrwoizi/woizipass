@@ -7,6 +7,7 @@ RUN apt-get update
 RUN apt-get -y dist-upgrade
 RUN apt-get update
 RUN apt-get -y upgrade
+RUN apt-get -y install unattended-upgrades
 
 RUN apt-get install -y curl
 RUN curl -sL https://deb.nodesource.com/setup_current.x | bash -
