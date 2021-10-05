@@ -50,7 +50,7 @@
     "@nestjs/platform-express": "^7.0.0",
     "@nestjs/serve-static": "^2.1.4",
     "@nrwl/angular": "10.4.4",
-    "argon2": "^0.27.0",
+    "argon2": "^0.28.2",
     "argon2-browser": "^1.15.2",
     "cache-manager": "^3.4.0",
     "crypto-js": "^4.0.0",
