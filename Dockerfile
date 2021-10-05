@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:latest
 
 # invalidate the docker cache to restart deployment from here every time
 ADD https://www.google.com /time.now
