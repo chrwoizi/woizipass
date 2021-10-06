@@ -32,8 +32,8 @@
         location.reload();
     }
 
-    passwordInput.onkeyup = async (e) => {
-        if (e.keyCode == '12' || e.keyCode == '13') {
+    passwordInput.onkeydown = async (e) => {
+        if (e.keyCode == '9' || e.keyCode == '13') {
             await login();
         }
         else {
