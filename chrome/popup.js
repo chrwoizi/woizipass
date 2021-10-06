@@ -33,7 +33,7 @@
     }
 
     passwordInput.onkeyup = async (e) => {
-        if (e.keyCode == '13') {
+        if (e.keyCode == '12' || e.keyCode == '13') {
             await login();
         }
         else {
