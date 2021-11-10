@@ -40,8 +40,18 @@ export class CredentialStoreService {
     const key = await this.getCachedKey();
     if (!key) return false;
 
+    // reset ttl
+    await this.cacheManager.set('key', key, {
+      ttl: jwtConstants.sessionTimeoutSeconds,
+    });
+
     const userExists = await this.cacheManager.get(userId);
     if (!userExists) return false;
+
+    // reset ttl
+    await this.cacheManager.set(userId, true, {
+      ttl: jwtConstants.sessionTimeoutSeconds,
+    });
 
     return true;
   }
@@ -60,7 +70,7 @@ export class CredentialStoreService {
       await this.setCachedKey(newKey);
 
       const userId = v4();
-      this.cacheManager.set(userId, true, {
+      await this.cacheManager.set(userId, true, {
         ttl: jwtConstants.sessionTimeoutSeconds,
       });
       return userId;
@@ -70,7 +80,7 @@ export class CredentialStoreService {
   }
 
   async logout() {
-    this.cacheManager.reset();
+    await this.cacheManager.reset();
   }
 
   async load(keyOverride?: string): Promise<WoizCredential[]> {
