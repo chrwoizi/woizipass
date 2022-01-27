@@ -89,22 +89,29 @@ export class CredentialTableComponent {
       restoreFocus: false,
     });
 
-    dialogRef.componentInstance.providers = this.unique(
-      this.dataSource.data
-        .map((x) => x.provider)
-        .filter((x) => typeof x === 'string' && x.length > 0)
+    function count(item, list) {
+      return list.filter((x) => x === item).length;
+    }
+
+    const providers = this.dataSource.data
+      .map((x) => x.provider)
+      .filter((x) => typeof x === 'string' && x.length > 0);
+    dialogRef.componentInstance.providers = this.unique(providers).sort(
+      (a, b) => count(b, providers) - count(a, providers)
     );
 
-    dialogRef.componentInstance.emails = this.unique(
-      this.dataSource.data
-        .map((x) => x.email)
-        .filter((x) => typeof x === 'string' && x.length > 0)
+    const emails = this.dataSource.data
+      .map((x) => x.email)
+      .filter((x) => typeof x === 'string' && x.length > 0);
+    dialogRef.componentInstance.emails = this.unique(emails).sort(
+      (a, b) => count(b, emails) - count(a, emails)
     );
 
-    dialogRef.componentInstance.usernames = this.unique(
-      this.dataSource.data
-        .map((x) => x.username)
-        .filter((x) => typeof x === 'string' && x.length > 0)
+    const usernames = this.dataSource.data
+      .map((x) => x.username)
+      .filter((x) => typeof x === 'string' && x.length > 0);
+    dialogRef.componentInstance.usernames = this.unique(usernames).sort(
+      (a, b) => count(b, usernames) - count(a, usernames)
     );
 
     return dialogRef;
