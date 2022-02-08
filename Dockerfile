@@ -10,7 +10,7 @@ RUN apt-get -y upgrade
 RUN apt-get -y install unattended-upgrades
 
 RUN apt-get install -y curl
-RUN curl -sL https://deb.nodesource.com/setup_current.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt-get install -y nodejs
 
 RUN useradd -ms /bin/bash woizipass
