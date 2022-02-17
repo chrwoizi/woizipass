@@ -54,6 +54,7 @@
     "argon2-browser": "^1.18.0",
     "cache-manager": "^3.6.0",
     "crypto-js": "^4.1.1",
+    "express": "^4.17.3",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
