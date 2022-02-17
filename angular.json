@@ -220,9 +220,6 @@
       }
     }
   },
-  "cli": {
-    "defaultCollection": "@nrwl/angular"
-  },
   "schematics": {
     "@nrwl/angular": {
       "application": {
@@ -243,6 +240,5 @@
       "unitTestRunner": "jest"
     }
   },
-  "defaultProject": "client",
   "scripts": ["node_modules/argon2-browser/lib/argon2.js"]
 }
