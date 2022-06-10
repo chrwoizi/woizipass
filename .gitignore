@@ -42,3 +42,4 @@ debug.log
 data
 *.private.http
 /private
+.angular
