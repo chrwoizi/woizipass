@@ -14,6 +14,10 @@ import { CredentialModule } from './credential/credential.module';
 import { CredentialService } from './credential/credential.service';
 import { jwtConstants } from './auth/auth.config';
 
+if (!jwtConstants.secret) {
+  throw new Error('JWT secret not set');
+}
+
 @Module({
   imports: [
     ServeStaticModule.forRoot({
