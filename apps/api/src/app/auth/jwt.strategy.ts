@@ -33,6 +33,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new Error();
     }
 
-    return { app: payload.app };
+    return { app: payload.app, userId: payload.userId };
   }
 }
