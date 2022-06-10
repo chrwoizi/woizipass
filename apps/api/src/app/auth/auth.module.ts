@@ -9,6 +9,10 @@ import { CredentialStoreService } from '../credential-store/credential-store.ser
 import { jwtConstants } from './auth.config';
 const passportModule = PassportModule.register({ defaultStrategy: 'jwt' });
 
+if (!jwtConstants.secret) {
+  throw new Error('JWT secret not set');
+}
+
 @Module({
   imports: [
     passportModule,
