@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { WoizCredential } from '@woizipass/api-interfaces';
 import { Observable } from 'rxjs';
@@ -25,15 +25,15 @@ export class UpdateCredentialDialogComponent {
   loading = false;
   error?: string;
 
-  providerControl = new FormControl();
+  providerControl = new UntypedFormControl();
   providers: string[] = [];
   filteredProviders: Observable<string[]>;
 
-  emailControl = new FormControl();
+  emailControl = new UntypedFormControl();
   emails: string[] = [];
   filteredEmails: Observable<string[]>;
 
-  usernameControl = new FormControl();
+  usernameControl = new UntypedFormControl();
   usernames: string[] = [];
   filteredUsernames: Observable<string[]>;
 
