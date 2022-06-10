@@ -19,7 +19,7 @@ RUN useradd -ms /bin/bash woizipass
 USER woizipass
 COPY --chown=woizipass:woizipass package.json package-lock.json decorate-angular-cli.js skip-postinstall.js /src/
 WORKDIR /src
-RUN npm ci --also=dev
+RUN npm ci --include=dev
 COPY --chown=woizipass:woizipass . /src
 RUN npm run nx -- build api --prod
 RUN npm run nx -- build client --prod
