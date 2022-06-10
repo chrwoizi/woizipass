@@ -40,20 +40,28 @@ export class CredentialStoreService {
     const key = await this.getCachedKey();
     if (!key) return false;
 
-    // reset ttl
-    await this.cacheManager.set('key', key, {
-      ttl: jwtConstants.sessionTimeoutSeconds,
-    });
-
     const userExists = await this.cacheManager.get(userId);
     if (!userExists) return false;
 
-    // reset ttl
-    await this.cacheManager.set(userId, true, {
-      ttl: jwtConstants.sessionTimeoutSeconds,
-    });
-
     return true;
+  }
+
+  async resetTtl(userId: string): Promise<void> {
+    const key = await this.getCachedKey();
+    if (key) {
+      // reset ttl
+      await this.cacheManager.set('key', key, {
+        ttl: jwtConstants.sessionTimeoutSeconds,
+      });
+    }
+
+    const userExists = await this.cacheManager.get(userId);
+    if (userExists) {
+      // reset ttl
+      await this.cacheManager.set(userId, true, {
+        ttl: jwtConstants.sessionTimeoutSeconds,
+      });
+    }
   }
 
   async login(newKey: string): Promise<string> {

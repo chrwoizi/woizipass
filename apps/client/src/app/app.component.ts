@@ -30,6 +30,11 @@ export class AppComponent {
     this.sessionService.change$.subscribe(() => {
       this.unauthorized = !this.sessionService.isLoggedIn();
     });
+    setInterval(() => {
+      if (this.sessionService.isLoggedIn()) {
+        this.sessionService.ping();
+      }
+    }, 1000);
   }
 
   openChangeMasterPasswordDialog() {

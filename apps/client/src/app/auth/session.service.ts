@@ -1,8 +1,5 @@
-import { Injectable } from '@angular/core';
-import * as moment from 'moment';
-import { shareReplay, tap, catchError } from 'rxjs/operators';
-import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { AuthRequest } from '@woizipass/api-interfaces';
 import {
   createApiKey,
@@ -10,6 +7,9 @@ import {
   decrypt,
   encrypt,
 } from '@woizipass/crypto-client';
+import * as moment from 'moment';
+import { Subject } from 'rxjs';
+import { catchError, shareReplay, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -34,6 +34,21 @@ export class SessionService {
         tap((res) => this.setSession(res)),
         shareReplay()
       );
+  }
+
+  ping() {
+    this.http
+      .get('/api/ping')
+      .pipe(
+        catchError((e) => {
+          if (e.status === 403) {
+            this.onUnauthorized();
+          }
+          throw e;
+        }),
+        shareReplay()
+      )
+      .subscribe();
   }
 
   parseJwt(token) {
