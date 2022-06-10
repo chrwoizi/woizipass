@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Post, Req } from '@nestjs/common';
+import { Controller, UseGuards, Post, Req, Get } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthResponse } from '@woizipass/api-interfaces';
 import { AuthAccessGuard } from './auth-access.guard';
@@ -18,5 +18,11 @@ export class AuthController {
   @Post('logout')
   async logout(): Promise<void> {
     await this.authService.logout();
+  }
+
+  @UseGuards(AuthAccessGuard)
+  @Get('ping')
+  async ping(): Promise<boolean> {
+    return true;
   }
 }

@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -13,21 +14,30 @@ import {
   WoizCredentials,
 } from '@woizipass/api-interfaces';
 import { AuthAccessGuard } from '../auth/auth-access.guard';
+import { CredentialStoreService } from '../credential-store/credential-store.service';
 import { CredentialService } from './credential.service';
 
 @Controller('credential')
 export class CredentialController {
-  constructor(private readonly credentialService: CredentialService) {}
+  constructor(
+    private readonly credentialService: CredentialService,
+    private credentialStoreService: CredentialStoreService
+  ) {}
 
   @UseGuards(AuthAccessGuard)
   @Get()
-  async getCredentials(): Promise<WoizCredentials> {
+  async getCredentials(@Req() req): Promise<WoizCredentials> {
+    await this.credentialStoreService.resetTtl(req.user?.userId);
     return await this.credentialService.getCredentials();
   }
 
   @UseGuards(AuthAccessGuard)
   @Get(':id')
-  async getPassword(@Param('id') id: string): Promise<GetPasswordResponse> {
+  async getPassword(
+    @Param('id') id: string,
+    @Req() req
+  ): Promise<GetPasswordResponse> {
+    await this.credentialStoreService.resetTtl(req.user?.userId);
     return { password: await this.credentialService.getPassword(id) };
   }
 
@@ -35,8 +45,10 @@ export class CredentialController {
   @Post()
   async update(
     @Body()
-    body: WoizCredential
+    body: WoizCredential,
+    @Req() req
   ): Promise<void> {
+    await this.credentialStoreService.resetTtl(req.user?.userId);
     await this.credentialService.update(body);
   }
 
@@ -44,8 +56,10 @@ export class CredentialController {
   @Delete(':id')
   async deleteCredential(
     @Param('id')
-    id: string
+    id: string,
+    @Req() req
   ): Promise<void> {
+    await this.credentialStoreService.resetTtl(req.user?.userId);
     await this.credentialService.deleteCredential(id);
   }
 }
