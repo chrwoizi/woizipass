@@ -1,14 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { DownloadRequest, UploadTextRequest } from '@woizipass/api-interfaces';
-import { SessionService } from '../auth/session.service';
+import {
+  DownloadRequest,
+  UploadTextRequest,
+  WoizCredential,
+} from '@woizipass/api-interfaces';
 import {
   createApiKey,
   createClientKey,
   decrypt,
   encrypt,
 } from '@woizipass/crypto-client';
+import { SessionService } from '../auth/session.service';
 
 @Component({
   selector: 'woizipass-change-master-password-dialog',
@@ -63,12 +67,13 @@ export class ChangeMasterPasswordDialogComponent {
           return;
         }
 
-        const credentials = JSON.parse(json);
+        const credentials: WoizCredential[] = JSON.parse(json);
 
         for (const credential of credentials) {
-          credential.password = decrypt(credential.password, oldClientKey);
-
-          credential.password = encrypt(credential.password, newClientKey);
+          if (credential.password?.length > 0) {
+            credential.password = decrypt(credential.password, oldClientKey);
+            credential.password = encrypt(credential.password, newClientKey);
+          }
         }
 
         const newEncrypted = encrypt(JSON.stringify(credentials), newApiKey);
