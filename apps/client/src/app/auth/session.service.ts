@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AuthRequest } from '@woizipass/api-interfaces';
+import { AuthRequest, AuthResponse } from '@woizipass/api-interfaces';
 import {
   createApiKey,
   createClientKey,
@@ -18,9 +18,13 @@ export class SessionService {
   private _changeSubject = new Subject<boolean>();
   change$ = this._changeSubject.asObservable();
 
+  public ttl: number;
+  private isLoggingIn: boolean;
+
   constructor(private http: HttpClient) {}
 
   async login(password: string) {
+    this.isLoggingIn = true;
     this.setClientKey(await createClientKey(password));
 
     const apiKey = await createApiKey(password);
@@ -31,7 +35,15 @@ export class SessionService {
         password: apiKey,
       } as AuthRequest)
       .pipe(
-        tap((res) => this.setSession(res)),
+        tap((res: AuthResponse) => {
+          this.setSession(res);
+          this.isLoggingIn = false;
+        }),
+        catchError((e) => {
+          this.isLoggingIn = false;
+          this.onUnauthorized();
+          throw e;
+        }),
         shareReplay()
       );
   }
@@ -46,9 +58,23 @@ export class SessionService {
           }
           throw e;
         }),
+        tap(() => {
+          this.resetTtl();
+        }),
         shareReplay()
       )
       .subscribe();
+  }
+
+  resetTtl() {
+    const expiresAt = localStorage.getItem('unlock_expires_at');
+    const ttl = localStorage.getItem('ttl');
+    if (expiresAt && ttl) {
+      localStorage.setItem(
+        'unlock_expires_at',
+        (new Date().getTime() + 1000 * parseInt(ttl)).toString()
+      );
+    }
   }
 
   parseJwt(token) {
@@ -65,18 +91,28 @@ export class SessionService {
     return JSON.parse(jsonPayload);
   }
 
-  private setSession(authResult: any) {
-    const tokenData = this.parseJwt(authResult.idToken);
-
+  private setSession(authResult: AuthResponse) {
+    const jwt = this.parseJwt(authResult.idToken);
+    this.ttl = authResult.ttl;
     localStorage.setItem('id_token', authResult.idToken);
-    localStorage.setItem('expires_at', tokenData.exp);
+    localStorage.setItem('ttl', authResult.ttl.toString());
+    localStorage.setItem('jwt_expires_at', (1000 * jwt.exp).toString());
+    localStorage.setItem(
+      'unlock_expires_at',
+      (new Date().getTime() + 1000 * authResult.ttl).toString()
+    );
     this._changeSubject.next(this.isLoggedIn());
   }
 
   onUnauthorized() {
+    if (this.isLoggingIn) {
+      return;
+    }
     localStorage.removeItem('client_key');
     localStorage.removeItem('id_token');
-    localStorage.removeItem('expires_at');
+    localStorage.removeItem('ttl');
+    localStorage.removeItem('jwt_expires_at');
+    localStorage.removeItem('unlock_expires_at');
     this._changeSubject.next(false);
   }
 
@@ -94,13 +130,19 @@ export class SessionService {
   }
 
   public isLoggedIn() {
-    return moment().isBefore(this.getExpiration());
+    return moment().isBefore(this.getJwtExpiresAt()) && moment().isBefore(this.getUnlockExpiresAt());
   }
 
-  getExpiration() {
-    const expiration = localStorage.getItem('expires_at');
+  getJwtExpiresAt() {
+    const expiration = localStorage.getItem('jwt_expires_at');
     const expiresAt = JSON.parse(expiration);
-    return moment.unix(expiresAt);
+    return moment(new Date(expiresAt));
+  }
+
+  getUnlockExpiresAt() {
+    const expiration = localStorage.getItem('unlock_expires_at');
+    const expiresAt = JSON.parse(expiration);
+    return moment(new Date(expiresAt));
   }
 
   private setClientKey(clientKey: string) {

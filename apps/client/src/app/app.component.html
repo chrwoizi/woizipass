@@ -29,7 +29,7 @@
       </button>
     </div>
     <div *ngIf="!unauthorized && !error">
-      <div>
+      <div class="button-bar">
         <button
           mat-raised-button
           color="primary"
@@ -38,11 +38,12 @@
         >
           NEW
         </button>
+        <div class="countdown">{{countdown}}</div>
         <button
+          class="burger"
           mat-icon-button
           [matMenuTriggerFor]="menu"
           aria-label="Example icon-button with a menu"
-          style="float: right"
         >
           <mat-icon>more_vert</mat-icon>
         </button>

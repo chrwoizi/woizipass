@@ -29,7 +29,7 @@ export class CredentialStoreService {
   private async setCachedKey(key: string) {
     if (key) {
       await this.cacheManager.set('key', key, {
-        ttl: jwtConstants.sessionTimeoutSeconds,
+        ttl: jwtConstants.unlockTimeoutSeconds,
       });
     } else {
       await this.cacheManager.del('key');
@@ -51,7 +51,7 @@ export class CredentialStoreService {
     if (key) {
       // reset ttl
       await this.cacheManager.set('key', key, {
-        ttl: jwtConstants.sessionTimeoutSeconds,
+        ttl: jwtConstants.unlockTimeoutSeconds,
       });
     }
 
@@ -59,7 +59,7 @@ export class CredentialStoreService {
     if (userExists) {
       // reset ttl
       await this.cacheManager.set(userId, true, {
-        ttl: jwtConstants.sessionTimeoutSeconds,
+        ttl: jwtConstants.unlockTimeoutSeconds,
       });
     }
   }
@@ -79,7 +79,7 @@ export class CredentialStoreService {
 
       const userId = v4();
       await this.cacheManager.set(userId, true, {
-        ttl: jwtConstants.sessionTimeoutSeconds,
+        ttl: jwtConstants.unlockTimeoutSeconds,
       });
       return userId;
     } catch {

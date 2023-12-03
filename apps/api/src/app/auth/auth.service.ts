@@ -6,6 +6,7 @@ import {
   User,
 } from '@woizipass/api-interfaces';
 import { CredentialStoreService } from '../credential-store/credential-store.service';
+import { jwtConstants } from './auth.config';
 
 @Injectable()
 export class AuthService {
@@ -29,6 +30,7 @@ export class AuthService {
     const token: AuthTokenPayload = { app: 'woizipass', userId: userId };
     return {
       idToken: this.jwtService.sign(token),
+      ttl: jwtConstants.unlockTimeoutSeconds,
     };
   }
 

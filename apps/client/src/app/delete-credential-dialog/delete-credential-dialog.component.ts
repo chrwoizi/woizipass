@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { SessionService } from '../auth/session.service';
 
@@ -32,6 +32,7 @@ export class DeleteCredentialDialogComponent {
     del$.subscribe(
       () => {
         this.dialogRef.close(true);
+        this.sessionService.resetTtl();
       },
       (e) => {
         this.loading = false;

@@ -1,4 +1,5 @@
 export const jwtConstants = {
   secret: process.env.JWT_SECRET,
-  sessionTimeoutSeconds: parseInt(process.env.SESSION_TIMEOUT_SECONDS || '600'),
+  jwtTimeoutSeconds: parseInt(process.env.JWT_TIMEOUT_SECONDS || '600'),
+  unlockTimeoutSeconds: parseInt(process.env.UNLOCK_TIMEOUT_SECONDS || '600'),
 };

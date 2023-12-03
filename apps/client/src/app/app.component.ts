@@ -6,6 +6,8 @@ import { SessionService } from './auth/session.service';
 import { CredentialTableComponent } from './credential-table/credential-table.component';
 import { DownloadDialogComponent } from './download-dialog/download-dialog.component';
 import { UploadDialogComponent } from './upload-dialog/upload-dialog.component';
+import * as moment from 'moment';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'woizipass-root',
@@ -17,6 +19,7 @@ export class AppComponent {
   masterPassword: string;
   loading = false;
   error: string;
+  countdown?: string;
 
   @ViewChild(CredentialTableComponent, { static: false })
   credentialTable: CredentialTableComponent;
@@ -32,9 +35,38 @@ export class AppComponent {
     });
     setInterval(() => {
       if (this.sessionService.isLoggedIn()) {
-        this.sessionService.ping();
+        const jwtExpiresAt: moment.Moment =
+          this.sessionService.getJwtExpiresAt();
+        const unlockExpiresAt: moment.Moment =
+          this.sessionService.getUnlockExpiresAt();
+        const expiresAt = jwtExpiresAt.isBefore(unlockExpiresAt)
+          ? jwtExpiresAt
+          : unlockExpiresAt;
+        const now = moment();
+        const diff = expiresAt.diff(now);
+        const duration = moment.duration(diff);
+        const hours = duration.hours();
+        const minutes = duration.minutes();
+        const seconds = duration.seconds();
+
+        // pad with leading zeros
+        this.countdown = `${
+          hours > 0 ? (hours < 10 ? '0' + hours + ':' : hours + ':') : ''
+        }${minutes < 10 ? '0' : ''}${minutes}:${
+          seconds < 10 ? '0' : ''
+        }${seconds}`;
+      } else {
+        this.sessionService.onUnauthorized();
+        this.countdown = undefined;
       }
-    }, 1000);
+    }, 100);
+    if (environment.keepSessionAlive) {
+      setInterval(() => {
+        if (this.sessionService.isLoggedIn()) {
+          this.sessionService.ping();
+        }
+      }, 10000);
+    }
   }
 
   openChangeMasterPasswordDialog() {

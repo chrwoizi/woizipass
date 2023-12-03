@@ -19,7 +19,7 @@ if (!jwtConstants.secret) {
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: {
-        expiresIn: jwtConstants.sessionTimeoutSeconds.toString() + ' seconds',
+        expiresIn: jwtConstants.jwtTimeoutSeconds.toString(),
       },
     }),
   ],

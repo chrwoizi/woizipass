@@ -18,7 +18,9 @@ export class AuthAccessGuard extends AuthGuard('jwt') {
       const result = (await super.canActivate(context)) as boolean;
       request.authorized = true;
       return result;
-    } catch {}
+    } catch {
+      request.authorized = false;
+    }
     return false;
   }
 

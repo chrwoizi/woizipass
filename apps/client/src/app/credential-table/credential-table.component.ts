@@ -11,6 +11,7 @@ import { Observable } from 'rxjs';
 import { SessionService } from '../auth/session.service';
 import { DeleteCredentialDialogComponent } from '../delete-credential-dialog/delete-credential-dialog.component';
 import { UpdateCredentialDialogComponent } from '../update-credential-dialog/update-credential-dialog.component';
+import { MatSort } from '@angular/material/sort';
 
 interface WoizCredentialViewModel extends WoizCredential {
   loading: boolean;
@@ -43,7 +44,41 @@ export class CredentialTableComponent {
         this.dataSource = new MatTableDataSource<WoizCredentialViewModel>(
           response.credentials as WoizCredentialViewModel[]
         );
+
+        this.dataSource.sortingDataAccessor = (item, property) => {
+          switch (property) {
+            case 'accessedAt':
+              return item.accessedAt;
+            case 'provider':
+              return item.provider;
+            case 'email':
+              return item.email;
+            case 'username':
+              return item.username;
+            default:
+              return item[property];
+          }
+        };
+
+        this.dataSource.sort = new MatSort();
+
+        const sortValue = localStorage.getItem('credential-table-sort');
+        if (sortValue) {
+          this.dataSource.sort.sort({
+            id: sortValue,
+            start: sortValue === 'accessedAt' ? 'desc' : 'asc',
+            disableClear: false,
+          });
+        } else {
+          this.dataSource.sort.sort({
+            id: 'accessedAt',
+            start: 'desc',
+            disableClear: false,
+          });
+        }
+
         this.observableData = this.dataSource.connect();
+        this.sessionService.resetTtl();
       },
       (e) => {
         this.loading = false;
@@ -54,6 +89,16 @@ export class CredentialTableComponent {
         }
       }
     );
+  }
+
+  applySort(event: Event) {
+    const sortValue = (event.target as HTMLInputElement).value;
+    this.dataSource.sort.sort({
+      id: sortValue,
+      start: sortValue === 'accessedAt' ? 'desc' : 'asc',
+      disableClear: false,
+    });
+    localStorage.setItem('credential-table-sort', sortValue);
   }
 
   applyFilter(event: Event) {
@@ -150,6 +195,7 @@ export class CredentialTableComponent {
         credential.password = this.sessionService.decryptWithClientKey(
           response.password
         );
+        this.sessionService.resetTtl();
       },
       (e) => {
         credential.loading = false;
@@ -183,6 +229,7 @@ export class CredentialTableComponent {
         this.copyText(
           this.sessionService.decryptWithClientKey(response.password)
         );
+        this.sessionService.resetTtl();
       },
       (e) => {
         credential.loading = false;
@@ -193,6 +240,14 @@ export class CredentialTableComponent {
         }
       }
     );
+  }
+
+  copyUsername(credential: WoizCredentialViewModel) {
+    this.copyText(credential.username ?? '');
+  }
+
+  copyEmail(credential: WoizCredentialViewModel) {
+    this.copyText(credential.email ?? '');
   }
 
   private copyText(text) {

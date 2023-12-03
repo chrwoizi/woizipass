@@ -33,6 +33,7 @@ export class AuthRequest {
 
 export class AuthResponse {
   readonly idToken: string;
+  readonly ttl: number;
 }
 
 export class User {

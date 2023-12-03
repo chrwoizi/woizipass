@@ -105,6 +105,7 @@ export class UpdateCredentialDialogComponent {
     post$.subscribe(
       () => {
         this.dialogRef.close(true);
+        this.sessionService.resetTtl();
       },
       (e) => {
         this.loading = false;
