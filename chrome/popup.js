@@ -1,197 +1,316 @@
 (async function () {
+  function decrypt(cipher, key) {
+    return CryptoJS.AES.decrypt(cipher, key).toString(CryptoJS.enc.Utf8);
+  }
 
-    await new Promise(r => document.addEventListener('DOMContentLoaded', r));
+  const logMessage = (message, data) => {
+    //console.log(message, data);
+  };
 
-    const background = await chrome.runtime.getBackgroundPage();
-    const woizipass = background.woizipass;
+  await new Promise((r) => document.addEventListener('DOMContentLoaded', r));
 
-    const tab = await new Promise(r => chrome.tabs.getSelected(null, r));
+  const [tab] = await new Promise((resolve) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, resolve);
+  });
 
-    const loginDiv = document.getElementById('unauthorized');
-    const loginButton = document.getElementById('login');
-    const passwordInput = document.getElementById('password');
-    const credentialsDiv = document.getElementById('credentials');
-    const noneDiv = document.getElementById('none');
-    const credentialTemplate = document.getElementById('template');
-    const errorDiv = document.getElementById('error');
-    const loadingDiv = document.getElementById('loading');
-    const logoutLink = document.getElementById('logout');
-    const woizipassLink = document.getElementById('woizipass');
+  const loginDiv = document.getElementById('unauthorized');
+  const loginButton = document.getElementById('login');
+  const passwordInput = document.getElementById('password');
+  const credentialsDiv = document.getElementById('credentials');
+  const noneDiv = document.getElementById('none');
+  const credentialTemplate = document.getElementById('template');
+  const errorDiv = document.getElementById('error');
+  const loadingDiv = document.getElementById('loading');
+  const logoutLink = document.getElementById('logout');
+  const woizipassLink = document.getElementById('woizipass');
 
-    const settings = await woizipass.loadSettings();
-    woizipassLink.href = settings.url;
-
-    loginButton.onclick = async () => {
-        await login();
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    logMessage('Received message:', message);
+    if (message.action === 'loadSettingsResponse') {
+      const settings =
+        message.response === 'undefined'
+          ? undefined
+          : JSON.parse(message.response);
+      woizipassLink.href = settings.url;
+      sendResponse();
+    } else if (message.action === 'getIdTokenResponse') {
+      handleIdTokenResponse(message.response);
+      sendResponse();
+    } else if (message.action === 'loadCredentialsResponse') {
+      const credentials =
+        message.response === 'undefined'
+          ? undefined
+          : JSON.parse(message.response);
+      showCredentials(credentials);
+      sendResponse();
+    } else if (message.action === 'loginResponse') {
+      handleLoginResponse(message.response);
+      sendResponse();
+    } else if (message.action === 'getCredentialResponse') {
+      const credentialResponse =
+        message.response === 'undefined'
+          ? undefined
+          : JSON.parse(message.response);
+      fillCredentialFormWithResponse(credentialResponse);
+      sendResponse();
     }
+  });
 
-    logoutLink.onclick = async (e) => {
-        e.preventDefault();
-        woizipass.idToken = undefined;
-        woizipass.clientKey = undefined;
-        location.reload();
+  logMessage('Send message: loadSettings', { action: 'loadSettings' });
+  chrome.runtime.sendMessage({ action: 'loadSettings' }, (response) => {
+    if (chrome.runtime.lastError) {
+      //console.error(chrome.runtime.lastError.message);
     }
+  });
 
-    passwordInput.onkeydown = async (e) => {
-        if (e.keyCode == '9' || e.keyCode == '13') {
-            await login();
+  loginButton.onclick = async () => {
+    await login();
+  };
+
+  logoutLink.onclick = async (e) => {
+    e.preventDefault();
+    logMessage('Send message: logout', { action: 'logout' });
+    await new Promise((resolve) => {
+      chrome.runtime.sendMessage({ action: 'logout' }, (response) => {
+        if (chrome.runtime.lastError) {
+          //console.error(chrome.runtime.lastError.message);
         }
-        else {
-            showError('');
-        }
+        resolve();
+      });
+    });
+    location.reload();
+  };
+
+  passwordInput.onkeydown = async (e) => {
+    if (e.keyCode == '9' || e.keyCode == '13') {
+      await login();
+    } else {
+      showError('');
     }
+  };
+
+  async function handleIdTokenResponse(idToken) {
+    if (idToken) {
+      try {
+        logMessage('Send message: loadCredentials', {
+          action: 'loadCredentials',
+          tabUrl: tab.url,
+          tabId: tab.id,
+        });
+        chrome.runtime.sendMessage(
+          {
+            action: 'loadCredentials',
+            tabUrl: tab.url,
+            tabId: tab.id,
+          },
+          (response) => {
+            if (chrome.runtime.lastError) {
+              //console.error(chrome.runtime.lastError.message);
+            }
+          }
+        );
+        await setAuthorized(true);
+      } catch (e) {
+        console.log(e);
+        await setAuthorized(false);
+      }
+    } else {
+      await setAuthorized(false);
+    }
+    loadingDiv.style.display = 'none';
+  }
+
+  logMessage('Send message: getIdToken', { action: 'getIdToken' });
+  chrome.runtime.sendMessage({ action: 'getIdToken' }, (response) => {
+    if (chrome.runtime.lastError) {
+      //console.error(chrome.runtime.lastError.message);
+    }
+  });
+
+  function showError(msg) {
+    errorDiv.innerText = msg;
+  }
+
+  async function login() {
+    if (!passwordInput.value) return;
+    const password = passwordInput.value;
+    passwordInput.value = '';
+
+    loadingDiv.style.display = 'block';
+    loginDiv.style.display = 'none';
+    await new Promise((r) => setTimeout(r, 1)); // render ui
+
+    logMessage('Send message: login', { action: 'login', password });
+    chrome.runtime.sendMessage({ action: 'login', password }, (response) => {
+      if (chrome.runtime.lastError) {
+        //console.error(chrome.runtime.lastError.message);
+      }
+    });
+  }
+
+  async function handleLoginResponse(response) {
+    try {
+      if (response === 'success') {
+        showError('');
+        await setAuthorized(true);
+        logMessage('Send message: loadCredentials', {
+          action: 'loadCredentials',
+          tabUrl: tab.url,
+          tabId: tab.id,
+        });
+        chrome.runtime.sendMessage(
+          {
+            action: 'loadCredentials',
+            tabUrl: tab.url,
+            tabId: tab.id,
+          },
+          (response) => {
+            if (chrome.runtime.lastError) {
+              //console.error(chrome.runtime.lastError.message);
+            }
+          }
+        );
+      } else {
+        throw new Error(response);
+      }
+    } catch (e) {
+      if (e.message === 'invalid response') {
+        showError(
+          'Please check the woizipass URL in the chrome extension options.'
+        );
+      }
+      if (e.message === '403') {
+        showError('Incorrect password.');
+      }
+      await setAuthorized(false);
+    } finally {
+      loadingDiv.style.display = 'none';
+    }
+  }
+
+  async function setAuthorized(authorized) {
+    loginDiv.style.display = authorized ? 'none' : 'block';
+    if (!authorized) {
+      credentialsDiv.style.display = 'none';
+      passwordInput.focus();
+    }
+  }
+
+  async function showCredentials(credentials) {
+    credentialsDiv.style.display = 'block';
+    noneDiv.style.display = credentials.length === 0 ? 'block' : 'none';
+
+    for (const credential of credentials) {
+      if (credential.username) {
+        await createCredentialButton(
+          credential.id,
+          credential.username,
+          credential.comment
+        );
+      }
+      if (credential.email) {
+        await createCredentialButton(
+          credential.id,
+          credential.email,
+          credential.comment
+        );
+      }
+    }
+  }
+
+  async function executeScripts(scripts) {
+    const file = scripts.files.shift();
 
     try {
-        if (woizipass.idToken) {
-            try {
-                const credentials = await woizipass.loadCredentials(tab);
-                await setAuthorized(true);
-                await showCredentials(credentials);
-            }
-            catch (e) {
-                console.log(e);
-                await setAuthorized(false);
-            }
-        }
-        else {
-            await setAuthorized(false);
-        }
-    }
-    finally {
-        loadingDiv.style.display = 'none';
+      await chrome.scripting.executeScript({
+        target: { tabId: scripts.tabId, allFrames: true },
+        files: [file],
+      });
+    } catch (e) {
+      logger.error('executeScript error for tab ' + scripts.tabId, e.message);
     }
 
-    function showError(msg) {
-        errorDiv.innerText = msg;
+    if (scripts.files.length > 0) {
+      await executeScripts(scripts);
+    }
+  }
+
+  async function fillCredentialForm(tabId, credentialId, username) {
+    loadingDiv.style.display = 'block';
+    credentialsDiv.style.display = 'none';
+    logMessage('Send message: getCredential', {
+      action: 'getCredential',
+      credentialId,
+      tabId,
+      username,
+    });
+    chrome.runtime.sendMessage(
+      {
+        action: 'getCredential',
+        credentialId,
+        tabId,
+        username,
+      },
+      (response) => {
+        if (chrome.runtime.lastError) {
+          //console.error(chrome.runtime.lastError.message);
+        }
+      }
+    );
+  }
+
+  async function fillCredentialFormWithResponse(credentialResponse) {
+    const password = decrypt(
+      credentialResponse.password,
+      credentialResponse.clientKey
+    );
+
+    const message = {
+      username: credentialResponse.username,
+      password: password,
+      method: '' /* click or submit */,
+      tabId: credentialResponse.tabId,
+      logLevel: logger.level,
+    };
+
+    let pong;
+    try {
+      logMessage('Send message: ping', { ping: true });
+      pong = await chrome.tabs.sendMessage(credentialResponse.tabId, {
+        ping: true,
+      });
+    } catch (e) {}
+
+    if (!pong || !pong.status == 'pong') {
+      await executeScripts({
+        tabId: credentialResponse.tabId,
+        files: [
+          'js/jquery.slim.min.js',
+          'logger.js',
+          'inuserview.js',
+          'page.js',
+        ],
+      });
     }
 
-    async function login() {
-        if (!passwordInput.value) return;
-        const password = passwordInput.value;
-        passwordInput.value = '';
+    logMessage('Send message:', message);
+    await chrome.tabs.sendMessage(credentialResponse.tabId, message);
 
-        loadingDiv.style.display = 'block';
-        loginDiv.style.display = 'none';
-        await new Promise(r => setTimeout(r, 1)); // render ui
+    //window.close();
+  }
 
-        try {
-            try {
-                await woizipass.login(password);
-                showError('');
-                await setAuthorized(true);
-            }
-            catch (e) {
-                if (e.message === 'invalid response') {
-                    showError('Please check the woizipass URL in the chrome extension options.');
-                }
-                if (e.message === '403') {
-                    showError('Incorrect password.');
-                }
-                await setAuthorized(false);
-                return;
-            }
+  async function createCredentialButton(credentialId, username, comment) {
+    const item = credentialTemplate.cloneNode(true);
 
-            const credentials = await woizipass.loadCredentials(tab);
-            await showCredentials(credentials);
-        }
-        finally {
-            loadingDiv.style.display = 'none';
-        }
-    }
+    item.style.display = 'block';
+    const button = item.querySelector('button');
+    const text = item.querySelector('div');
+    button.innerText = username;
+    text.innerText = comment || '';
 
-    async function setAuthorized(authorized) {
-        loginDiv.style.display = authorized ? 'none' : 'block';
-        if (!authorized) {
-            credentialsDiv.style.display = 'none';
-            passwordInput.focus();
-        }
-    }
+    button.onclick = async () =>
+      await fillCredentialForm(tab.id, credentialId, username);
 
-    async function showCredentials(credentials) {
-        credentialsDiv.style.display = 'block';
-        noneDiv.style.display = credentials.length === 0 ? "block" : "none";
-
-        for (const credential of credentials) {
-            if (credential.username) {
-                await createCredentialButton(credential.id, credential.username, credential.comment);
-            }
-            if (credential.email) {
-                await createCredentialButton(credential.id, credential.email, credential.comment);
-            }
-        }
-
-        credentialTemplate.remove();
-    }
-
-    async function executeScripts(scripts) {
-        const file = scripts.files.shift();
-        const details = { file: file, runAt: "document_idle", allFrames: true }
-
-        try {
-            await chrome.tabs.executeScript(scripts.tabId, details)
-        }
-        catch (e) {
-            logger.error('executeScripts error:', e.message)
-        }
-
-        if (scripts.files.length > 0) {
-            await executeScripts(scripts);
-        }
-    }
-
-    async function fillCredentialForm(tabId, credentialId, username) {
-        loadingDiv.style.display = 'block';
-        credentialsDiv.style.display = 'none';
-        try {
-            const settings = await woizipass.loadSettings();
-            const credentialResponse = await woizipass.http("GET", settings.url + "/api/credential/" + credentialId, { authorization: 'Bearer ' + woizipass.idToken })
-
-            const password = decrypt(credentialResponse.password, woizipass.clientKey);
-
-            const message = {
-                username: username,
-                password: password,
-                method: '' /* click or submit */,
-                tabId: tabId,
-                logLevel: logger.level
-            }
-
-            let pong;
-            try {
-                pong = await chrome.tabs.sendMessage(tabId, { "ping": true })
-            }
-            catch (e) {
-            }
-
-            if (!pong || !pong.status == "pong") {
-                await executeScripts(
-                    {
-                        tabId: tabId,
-                        files: ['js/jquery.slim.min.js', 'logger.js', 'inuserview.js', 'page.js']
-                    }
-                )
-            }
-
-            await chrome.tabs.sendMessage(tabId, message)
-
-            window.close();
-        }
-        finally {
-            loadingDiv.style.display = 'none';
-            credentialsDiv.style.display = 'block';
-        }
-    }
-
-    async function createCredentialButton(credentialId, username, comment) {
-        const item = credentialTemplate.cloneNode(true);
-
-        const button = item.querySelector('button');
-        const text = item.querySelector('div');
-        button.innerText = username;
-        text.innerText = comment || '';
-
-        button.onclick = async () => await fillCredentialForm(tab.id, credentialId, username);
-
-        credentialTemplate.parentNode.insertBefore(item, credentialTemplate);
-    }
+    credentialTemplate.parentNode.insertBefore(item, credentialTemplate);
+  }
 })();
